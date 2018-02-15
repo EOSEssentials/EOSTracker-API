@@ -1,14 +1,14 @@
-💎 EOS Explorer API
+💎 EOS Tracker API
 ========================
 
-The "EOS Explorer API" is a PHP Backend based on Symfony3 that connects to a MongoDB database.
+EOS Tracker API is a PHP Backend based on Symfony3 that connects to a MongoDB database.
 
 📌 Requirements
 ------------
 
   * PHP 5 or higher;
   * Mongodb PHP extension enabled;
-  * Apcu extension suggested
+  * Apcu extension (optional)
   * and the [usual Symfony application requirements][1].
   
 📌 Installing Composer
@@ -25,6 +25,8 @@ Download the installer from [getcomposer.org/download](https://getcomposer.org/d
 Execute this command to install the project:
 
 ```bash
+$ git clone git@github.com:EOSEssentials/EOSTracker-API.git
+$ cd EOSTracker-API
 $ composer install
 ```
 
@@ -36,7 +38,6 @@ command to run the built-in web server and access the application in your
 browser at <http://localhost:8000>:
 
 ```bash
-$ cd eos-explorer-api/
 $ php bin/console server:run
 ```
 
