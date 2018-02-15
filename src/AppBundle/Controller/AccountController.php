@@ -33,4 +33,25 @@ class AccountController extends Controller
 
         return new JsonResponse($items);
     }
+
+    /**
+     * @Route("/accounts/name", name="accounts_name")
+     */
+    public function accountsNameAction(Request $request)
+    {
+        $db = $this->get('eos_explorer.mongo_service');
+
+        $size = (int)$request->get('size', self::DEFAULT_SIZE);
+        $items = [];
+        $cursor = $db->get()->Accounts
+            ->find(['name' => ['$regex' => $request->get('name')]], ['name' => 1, '_id' => 0])
+            ->skip((int)$request->get('page', 0) * $size)
+            ->limit($size);
+
+        foreach ($cursor as $key => $document) {
+            $items[] = $document;
+        }
+
+        return new JsonResponse($items);
+    }
 }
