@@ -7,24 +7,21 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MessageController extends Controller
+class AccountController extends Controller
 {
     const DEFAULT_SIZE = 30;
 
     /**
-     * @Route("/messages", name="messages")
+     * @Route("/accounts", name="accounts")
      */
-    public function messagesAction(Request $request)
+    public function accountsAction(Request $request)
     {
         $db = $this->get('eos_explorer.mongo_service');
 
         $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = ($request->get('transaction_id')) ? [
-            'transaction_id' => (string)$request->get('transaction_id'),
-            'message_id' => (int)$request->get('msg_id'),
-        ] : [];
+        $filter = ($request->get('name')) ? ['name' => (string)$request->get('name')] : [];
         $items = [];
-        $cursor = $db->get()->Messages
+        $cursor = $db->get()->Accounts
             ->find($filter)
             ->sort(['createdAt' => -1])
             ->skip((int)$request->get('page', 0) * $size)

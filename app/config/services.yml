@@ -4,3 +4,11 @@ parameters:
     #parameter_name: value
 
 services:
+  eos_explorer.cache_service:
+    class: AppBundle\Services\ApcuCacheService # AppBundle\Services\NullCacheService
+
+  eos_explorer.mongo_service:
+    class: AppBundle\Services\MongoService
+    arguments:
+      - '%mongodb_server%'
+      - '%db_name%'

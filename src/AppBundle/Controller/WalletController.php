@@ -11,18 +11,19 @@ class WalletController extends Controller
 {
 
     const DEFAULT_SIZE = 30;
-    const DEFAULT_CACHING = 4;
 
     /**
-     * @Route("/wallet/messages", name="messages")
+     * @Route("/wallet/messages", name="wallet_messages")
      */
     public function messagesByHandlerAction(Request $request)
     {
+        $db = $this->get('eos_explorer.mongo_service');
+
         $size = (int)$request->get('size', self::DEFAULT_SIZE);
         $scope = $request->get('scope');
         $handler = $request->get('handler');
         $items = [];
-        $cursor = $this->getDB()->Transactions
+        $cursor = $db->get()->Transactions
             ->aggregate([
                 [
                     '$lookup' =>
@@ -60,9 +61,12 @@ class WalletController extends Controller
      */
     public function groupMessagesByHandlerAction(Request $request)
     {
+
+        $db = $this->get('eos_explorer.mongo_service');
+
         $scope = $request->get('scope');
         $items = [];
-        $cursor = $this->getDB()->Transactions
+        $cursor = $db->get()->Transactions
             ->aggregate([
                 [
                     '$lookup' =>
@@ -89,13 +93,5 @@ class WalletController extends Controller
         }
 
         return new JsonResponse($items);
-    }
-
-
-    private function getDB()
-    {
-        $mongo = new \MongoClient($this->getParameter('mongodb_server'));
-
-        return $mongo->selectDB($this->getParameter('db_name'));
     }
 }

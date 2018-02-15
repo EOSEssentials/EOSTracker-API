@@ -7,26 +7,24 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
-class MessageController extends Controller
+class BlockController extends Controller
 {
     const DEFAULT_SIZE = 30;
 
     /**
-     * @Route("/messages", name="messages")
+     * @Route("/blocks", name="blocks")
      */
-    public function messagesAction(Request $request)
+    public function blocksAction(Request $request)
     {
+        $size = (int)$request->get('size', self::DEFAULT_SIZE);
+        $filter = ($request->get('block_num')) ? ['block_num' => (int)$request->get('block_num')] : [];
+        $items = [];
+
         $db = $this->get('eos_explorer.mongo_service');
 
-        $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = ($request->get('transaction_id')) ? [
-            'transaction_id' => (string)$request->get('transaction_id'),
-            'message_id' => (int)$request->get('msg_id'),
-        ] : [];
-        $items = [];
-        $cursor = $db->get()->Messages
+        $cursor = $db->get()->Blocks
             ->find($filter)
-            ->sort(['createdAt' => -1])
+            ->sort(['block_num' => -1])
             ->skip((int)$request->get('page', 0) * $size)
             ->limit($size);
 
