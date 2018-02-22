@@ -25,7 +25,7 @@ class DefaultController extends Controller
                 $db->get()->Blocks->count(),
                 $db->get()->Transactions->count(),
                 $db->get()->Accounts->count(),
-                $db->get()->Messages->count(),
+                $db->get()->Actions->count(),
             ];
             $cache->get()->set('stats.action', $result, $cache::DEFAULT_CACHING);
         }
