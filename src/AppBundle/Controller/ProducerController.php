@@ -25,7 +25,7 @@ class ProducerController extends Controller
             $cursor = $db->get()->Blocks->aggregate([
                 ['$group' => ["_id" => '$producer_account_id', "count" => ['$sum' => 1]]],
                 ['$sort' => ['count' => -1]],
-            ]);
+            ], ["cursor" => [ "batchSize" => 0 ]]);
 
             foreach ($cursor['result'] as $key => $document) {
                 $account = $db->get()->Accounts->findOne(['name' => $document['_id']]);
