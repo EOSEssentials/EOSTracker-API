@@ -13,7 +13,7 @@ class WalletController extends Controller
     const DEFAULT_SIZE = 30;
 
     /**
-     * @Route("/wallet/messages", name="wallet_messages")
+     * @Route("/wallet/actions", name="wallet_actions")
      */
     public function messagesByHandlerAction(Request $request)
     {
@@ -28,7 +28,7 @@ class WalletController extends Controller
                 [
                     '$lookup' =>
                         [
-                            'from' => 'Messages',
+                            'from' => 'Actions',
                             'localField' => 'transaction_id',
                             'foreignField' => 'transaction_id',
                             'as' => 'message',
@@ -43,7 +43,7 @@ class WalletController extends Controller
                         ],
                     ],
                 ],
-                ['$unwind' => '$message'],
+                ['$unwind' => '$action'],
                 ['$sort' => ['createdAt' => -1]],
                 ['$skip' => (int)$request->get('page', 0) * $size],
                 ['$limit' => $size],
@@ -57,7 +57,7 @@ class WalletController extends Controller
     }
 
     /**
-     * @Route("/wallet/messages/groups", name="messages_count")
+     * @Route("/wallet/actions/groups", name="actions_count")
      */
     public function groupMessagesByHandlerAction(Request $request)
     {
@@ -71,18 +71,18 @@ class WalletController extends Controller
                 [
                     '$lookup' =>
                         [
-                            'from' => 'Messages',
+                            'from' => 'Actions',
                             'localField' => 'transaction_id',
                             'foreignField' => 'transaction_id',
-                            'as' => 'messages',
+                            'as' => 'actions',
                         ],
                 ]
                 ,
                 ['$match' => ["scope" => $scope]],
-                ['$unwind' => '$messages'],
+                ['$unwind' => '$actions'],
                 [
                     '$group' => [
-                        '_id' => '$messages.handler_account_name',
+                        '_id' => '$actions.handler_account_name',
                         'count' => ['$sum' => 1],
                     ],
                 ],
