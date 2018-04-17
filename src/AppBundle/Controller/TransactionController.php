@@ -18,7 +18,7 @@ class TransactionController extends Controller
     public function transactionsAction(Request $request)
     {
         $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = [];
+        $filter = (object)[];
         if ($request->get('transaction_id')) {
             $filter = ['transaction_id' => (string)$request->get('transaction_id')];
         }
@@ -31,11 +31,28 @@ class TransactionController extends Controller
         $items = [];
         $db = $this->get('eos_explorer.mongo_service');
 
-        $cursor = $db->get()->Transactions
-            ->find($filter)
-            ->sort(['createdAt' => -1])
-            ->skip((int)$request->get('page', 0) * $size)
-            ->limit($size);
+        $cursor = $db->get()->Transactions->aggregateCursor( [
+            [ '$match' => $filter ],
+            [ '$sort' => [ 'ref_block_num' => -1 ] ],
+            [ '$lookup' => [
+                'from' => 'Blocks',
+                'localField' => 'block_id',
+                'foreignField' => 'block_id',
+                'as' => 'block_doc' ] ], 
+            [ '$unwind' => '$block_doc' ], 
+            [ '$project' => [
+                'ref_block_timestamp' => '$block_doc.timestamp',
+                'transaction_id' => 1,
+                'sequence_num' => 1,
+                'block_id' => 1,
+                'ref_block_num' => 1,
+                'ref_block_prefix' => 1,
+                'expiration' =>  1,
+                'signatures' => 1,
+                'messages' => 1 ] ],
+            [ '$skip' => (int)$request->get('page', 0) * $size ],
+            [ '$limit' => $size ]
+        ] );
 
         foreach ($cursor as $key => $document) {
             $items[] = $document;
