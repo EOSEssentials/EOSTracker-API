@@ -1,0 +1,21 @@
+AppBundle\Entity\Action:
+    type: entity
+    table: actions
+    repositoryClass: AppBundle\Services\ActionService
+    id:
+        id:
+            type: string
+    fields:
+        data:
+            type: json
+            nullable: true
+        name:
+            type: string
+    manyToOne:
+        account:
+            targetEntity: AppBundle\Entity\Account
+            joinColumn:
+              name: account
+              referencedColumnName: name
+        transaction:
+            targetEntity: AppBundle\Entity\Transaction

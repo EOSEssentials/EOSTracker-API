@@ -52,3 +52,26 @@ nelmio_cors:
             allow_headers: ['*']
             allow_methods: ['GET']
             max_age: 3600
+
+doctrine:
+    dbal:
+        url: %database_url%
+        driver:   pdo_mysql
+        server_version: 5.7
+        charset:  UTF8
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        metadata_cache_driver: apcu # enable clear cache if changed
+        query_cache_driver: apcu # enable clear cache if changed
+        result_cache_driver: apcu # enable clear cache if changed
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        dql:
+          string_functions:
+            field: DoctrineExtensions\Query\Mysql\Field
+        auto_mapping: true
+        mappings:
+          AppBundle:
+            type: yml
+            dir: Resources/config/doctrine
+            alias: EOSTracker
+            prefix: AppBundle\Entity

@@ -9,31 +9,32 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ActionController extends Controller
 {
-    const DEFAULT_SIZE = 30;
-
     /**
      * @Route("/actions", name="actions")
      */
-    public function messagesAction(Request $request)
+    public function actionsAction(Request $request)
     {
-        $db = $this->get('eos_explorer.mongo_service');
-
-        $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = ($request->get('transaction_id')) ? [
-            'transaction_id' => (string)$request->get('transaction_id'),
-            'action_id' => (int)$request->get('action_id'),
-        ] : [];
-        $items = [];
-        $cursor = $db->get()->Actions
-            ->find($filter)
-            ->sort(['createdAt' => -1])
-            ->skip((int)$request->get('page', 0) * $size)
-            ->limit($size);
-
-        foreach ($cursor as $key => $document) {
-            $items[] = $document;
+        $service = $this->get('api.action_service');
+        $size = $request->query->getInt('size', 20);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $service->get($page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
         }
 
-        return new JsonResponse($items);
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @Route("/action", name="action")
+     */
+    public function actionAction(string $id)
+    {
+        $service = $this->get('api.action_service');
+        $item = $service->findOneBy(['id' => $id]);
+
+        return new JsonResponse($item->toArray());
+
     }
 }

@@ -4,5 +4,4 @@
 parameters:
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
-    mongodb_server: "mongodb://eos:eos@youreos.io:27017/EOS"
-    db_name: "EOS"
+    database_url: 'mysql://root@localhost/eos'

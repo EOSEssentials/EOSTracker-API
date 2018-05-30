@@ -1,13 +1,13 @@
 💎 EOS Tracker API
 ========================
 
-EOS Tracker API is a PHP Backend based on Symfony3 that connects to a MongoDB database.
+EOS Tracker API is a PHP Backend based on Symfony3 that connects to a MySQL database.
 
 📌 Requirements
 ------------
 
   * PHP 5 or higher;
-  * Mongodb PHP extension enabled;
+  * MySQL PHP extension enabled;
   * Apcu extension (optional)
   * and the [usual Symfony application requirements][1].
   

@@ -9,49 +9,32 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class AccountController extends Controller
 {
-    const DEFAULT_SIZE = 30;
-
     /**
      * @Route("/accounts", name="accounts")
      */
     public function accountsAction(Request $request)
     {
-        $db = $this->get('eos_explorer.mongo_service');
-
-        $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = ($request->get('name')) ? ['name' => (string)$request->get('name')] : [];
-        $items = [];
-        $cursor = $db->get()->Accounts
-            ->find($filter)
-            ->sort(['createdAt' => -1])
-            ->skip((int)$request->get('page', 0) * $size)
-            ->limit($size);
-
-        foreach ($cursor as $key => $document) {
-            $items[] = $document;
+        $service = $this->get('api.account_service');
+        $size = $request->query->getInt('size', 20);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $service->get($page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
         }
 
-        return new JsonResponse($items);
+        return new JsonResponse($response);
+
     }
 
     /**
-     * @Route("/accounts/name", name="accounts_name")
+     * @Route("/accounts/{name}", name="account")
      */
-    public function accountsNameAction(Request $request)
+    public function accountAction(string $name)
     {
-        $db = $this->get('eos_explorer.mongo_service');
+        $service = $this->get('api.account_service');
+        $item = $service->findOneBy(['name' => $name]);
 
-        $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $items = [];
-        $cursor = $db->get()->Accounts
-            ->find(['name' => ['$regex' => $request->get('name')]], ['name' => 1, '_id' => 0])
-            ->skip((int)$request->get('page', 0) * $size)
-            ->limit($size);
-
-        foreach ($cursor as $key => $document) {
-            $items[] = $document;
-        }
-
-        return new JsonResponse($items);
+        return new JsonResponse($item->toArray());
     }
 }

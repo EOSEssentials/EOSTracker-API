@@ -9,29 +9,31 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class BlockController extends Controller
 {
-    const DEFAULT_SIZE = 30;
-
     /**
      * @Route("/blocks", name="blocks")
      */
     public function blocksAction(Request $request)
     {
-        $size = (int)$request->get('size', self::DEFAULT_SIZE);
-        $filter = ($request->get('block_num')) ? ['block_num' => (int)$request->get('block_num')] : [];
-        $items = [];
-
-        $db = $this->get('eos_explorer.mongo_service');
-
-        $cursor = $db->get()->Blocks
-            ->find($filter)
-            ->sort(['block_num' => -1])
-            ->skip((int)$request->get('page', 0) * $size)
-            ->limit($size);
-
-        foreach ($cursor as $key => $document) {
-            $items[] = $document;
+        $service = $this->get('api.block_service');
+        $size = $request->query->getInt('size', 20);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $service->get($page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
         }
 
-        return new JsonResponse($items);
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @Route("/blocks/{id}", name="block")
+     */
+    public function blockAction(string $id)
+    {
+        $service = $this->get('api.block_service');
+        $item = $service->findOneBy(['id' => $id]);
+
+        return new JsonResponse($item->toArray());
     }
 }

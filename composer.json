@@ -20,8 +20,15 @@
         ]
     },
     "require": {
-        "php": ">=5.5.9",
-        "alcaeus/mongo-php-adapter": "^1.1",
+        "php": ">=7.1",
+        "ext-intl": "*",
+        "ext-mbstring": "*",
+        "ext-apcu": "*",
+        "doctrine/doctrine-bundle": "^1.6",
+        "doctrine/doctrine-cache-bundle": "^1.2",
+        "stof/doctrine-extensions-bundle": "^1.2",
+        "doctrine/orm": "^2.5",
+        "fzaninotto/faker": "^1.5",
         "incenteev/composer-parameter-handler": "^2.0",
         "nelmio/cors-bundle": "^1.5",
         "sensio/distribution-bundle": "^5.0.19",
@@ -34,6 +41,7 @@
         "twig/twig": "^1.0||^2.0"
     },
     "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "^3.0",
         "sensio/generator-bundle": "^3.0",
         "symfony/phpunit-bridge": "^3.0"
     },
@@ -56,7 +64,6 @@
     "config": {
         "sort-packages": true,
         "platform": {
-            "ext-mongo": "1.6.16"
         }
     },
     "extra": {

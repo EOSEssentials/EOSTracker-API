@@ -1,14 +1,43 @@
-# Learn more about services, parameters and containers at
-# https://symfony.com/doc/current/service_container.html
 parameters:
     #parameter_name: value
 
 services:
-  eos_explorer.cache_service:
+  api.cache_service:
     class: AppBundle\Services\ApcuCacheService # AppBundle\Services\NullCacheService
 
-  eos_explorer.mongo_service:
-    class: AppBundle\Services\MongoService
+  api.fixtures.accounts:
+    class: AppBundle\DataFixtures\AccountFixtures
+    tags: [doctrine.fixture.orm]
+    public: false
+
+  api.account_service:
+    class: AppBundle\Services\AccountService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
     arguments:
-      - '%mongodb_server%'
-      - '%db_name%'
+      - AppBundle\Entity\Account
+    lazy: true
+    public: true
+
+  api.block_service:
+    class: AppBundle\Services\BlockService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
+    arguments:
+      - AppBundle\Entity\Block
+    lazy: true
+    public: true
+
+  api.action_service:
+    class: AppBundle\Services\ActionService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
+    arguments:
+      - AppBundle\Entity\Action
+    lazy: true
+    public: true
+
+  api.transaction_service:
+    class: AppBundle\Services\TransactionService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
+    arguments:
+      - AppBundle\Entity\Transaction
+    lazy: true
+    public: true
