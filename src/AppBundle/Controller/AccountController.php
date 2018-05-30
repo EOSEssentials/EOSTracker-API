@@ -15,7 +15,7 @@ class AccountController extends Controller
     public function accountsAction(Request $request)
     {
         $service = $this->get('api.account_service');
-        $size = $request->query->getInt('size', 20);
+        $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $response = [];
         $items = $service->get($page, $size);

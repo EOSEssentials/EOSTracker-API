@@ -15,7 +15,7 @@ class ActionController extends Controller
     public function actionsAction(Request $request)
     {
         $service = $this->get('api.action_service');
-        $size = $request->query->getInt('size', 20);
+        $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $response = [];
         $items = $service->get($page, $size);

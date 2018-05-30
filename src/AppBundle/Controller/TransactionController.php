@@ -15,7 +15,7 @@ class TransactionController extends Controller
     public function transactionsAction(Request $request)
     {
         $service = $this->get('api.transaction_service');
-        $size = $request->query->getInt('size', 20);
+        $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $response = [];
         $items = $service->get($page, $size);
@@ -31,7 +31,7 @@ class TransactionController extends Controller
      */
     public function transactionAction(string $id)
     {
-        $service = $this->get('api.block_service');
+        $service = $this->get('api.transaction_service');
         $item = $service->findOneBy(['id' => $id]);
 
         return new JsonResponse($item->toArray());

@@ -15,7 +15,7 @@ class BlockController extends Controller
     public function blocksAction(Request $request)
     {
         $service = $this->get('api.block_service');
-        $size = $request->query->getInt('size', 20);
+        $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $response = [];
         $items = $service->get($page, $size);
