@@ -9,8 +9,12 @@ class AccountService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 20)
     {
-        $query = $this->createQueryBuilder('q')->getQuery()
-            ->setFirstResult($limit * ($page - 1))
+        $query = $this->getEntityManager()->createQuery(<<<DQL
+SELECT a
+FROM AppBundle\Entity\Account a
+ORDER BY a.createdAt DESC
+DQL
+        )            ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit);
 
         return new Paginator($query);

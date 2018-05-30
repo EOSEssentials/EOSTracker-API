@@ -9,7 +9,12 @@ class BlockService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 20)
     {
-        $query = $this->createQueryBuilder('q')->getQuery()
+        $query = $this->getEntityManager()->createQuery(<<<DQL
+SELECT b
+FROM AppBundle\Entity\Block b
+ORDER BY b.blockNumber DESC
+DQL
+        )
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit);
 
