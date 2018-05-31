@@ -7,7 +7,7 @@ use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class BlockService extends EntityRepository
 {
-    public function get(int $page = 1, int $limit = 20)
+    public function get(int $page = 1, int $limit = 30)
     {
         $query = $this->getEntityManager()->createQuery(<<<DQL
 SELECT b

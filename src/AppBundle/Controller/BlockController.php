@@ -32,8 +32,25 @@ class BlockController extends Controller
     public function blockAction(string $id)
     {
         $service = $this->get('api.block_service');
-        $item = $service->findOneBy(['id' => $id]);
+        $item = $service->findOneBy(['blockNumber' => $id]);
 
         return new JsonResponse($item->toArray());
+    }
+
+    /**
+     * @Route("/blocks/{id}/transactions", name="block_transactions")
+     */
+    public function blockTransactionsAction(string $id, Request $request)
+    {
+        $service = $this->get('api.transaction_service');
+        $size = $request->query->getInt('size', 30);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $service->getForBlock($id, $page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
+        }
+
+        return new JsonResponse($response);
     }
 }
