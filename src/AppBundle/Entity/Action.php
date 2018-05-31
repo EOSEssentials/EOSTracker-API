@@ -9,6 +9,7 @@ class Action
     private $transaction;
     private $name;
     private $data;
+    private $authorizations;
 
     public function __construct(string $id, Account $account, Transaction $transaction, string $name, array $data)
     {
@@ -17,6 +18,7 @@ class Action
         $this->transaction = $transaction;
         $this->name = $name;
         $this->data = $data;
+        $this->authorizations = [];
     }
 
     public function id(): string
@@ -44,6 +46,11 @@ class Action
         return $this->data;
     }
 
+    public function authorizations()
+    {
+        return $this->authorizations;
+    }
+
     public function toArray(): array
     {
         return [
@@ -52,6 +59,18 @@ class Action
             'transaction' => $this->transaction()->id(),
             'name' => $this->name(),
             'data' => $this->data(),
+            'authorizations' => $this->authorizationsToArray()
         ];
+    }
+
+    private function authorizationsToArray()
+    {
+        $authorizations = [];
+        foreach($this->authorizations() as $authorization)
+        {
+            $authorizations[] = $authorization->toArray();
+        }
+
+        return $authorizations;
     }
 }

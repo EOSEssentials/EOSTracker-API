@@ -19,3 +19,7 @@ AppBundle\Entity\Action:
               referencedColumnName: name
         transaction:
             targetEntity: AppBundle\Entity\Transaction
+    oneToMany:
+        authorizations:
+          targetEntity: AppBundle\Entity\ActionAccount
+          mappedBy: action

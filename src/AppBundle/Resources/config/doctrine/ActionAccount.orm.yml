@@ -1,0 +1,19 @@
+AppBundle\Entity\ActionAccount:
+    type: entity
+    table: actions_accounts
+    id:
+        action:
+          associationKey: true
+        actor:
+          associationKey: true
+        permission:
+          type: string
+    fields:
+    manyToOne:
+        action:
+            targetEntity: AppBundle\Entity\Action
+        actor:
+            targetEntity: AppBundle\Entity\Account
+            joinColumn:
+              name: actor
+              referencedColumnName: name

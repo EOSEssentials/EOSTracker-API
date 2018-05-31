@@ -27,7 +27,7 @@ class ActionController extends Controller
     }
 
     /**
-     * @Route("/action", name="action")
+     * @Route("/actions/{id}", name="action")
      */
     public function actionAction(string $id)
     {
