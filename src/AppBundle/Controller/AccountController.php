@@ -44,10 +44,12 @@ class AccountController extends Controller
     public function accountActionsAction(string $name, Request $request)
     {
         $service = $this->get('api.action_service');
+        $accountService = $this->get('api.account_service');
+        $account = $accountService->findOneBy(['name' => $name]);
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $response = [];
-        $items = $service->getForAccount($name, $page, $size);
+        $items = $service->getForAccount($account, $page, $size);
         foreach ($items as $item) {
             $response[] = $item->toArray();
         }

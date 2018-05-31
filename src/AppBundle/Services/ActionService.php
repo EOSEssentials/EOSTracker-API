@@ -2,6 +2,7 @@
 
 namespace AppBundle\Services;
 
+use AppBundle\Entity\Account;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -23,15 +24,15 @@ DQL
         return new Paginator($query);
     }
 
-    public function getForAccount(string $account, int $page = 1, int $limit = 30)
+    public function getForAccount(Account $account, int $page = 1, int $limit = 30)
     {
         $query = $this->getEntityManager()->createQuery(<<<DQL
-SELECT a
+SELECT a, aa, att, ac
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
-WHERE ac.name = :ACCOUNT
+WHERE a.account = :ACCOUNT OR a.id IN (SELECT a2.id FROM AppBundle\Entity\Action a2 LEFT JOIN a2.authorizations aa2 WITH aa2.actor = :ACCOUNT)
 ORDER BY att.createdAt DESC
 DQL
         )
