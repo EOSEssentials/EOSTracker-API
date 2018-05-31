@@ -37,4 +37,21 @@ class AccountController extends Controller
 
         return new JsonResponse($item->toArray());
     }
+
+    /**
+     * @Route("/accounts/{name}/actions", name="account_actions")
+     */
+    public function accountActionsAction(string $name, Request $request)
+    {
+        $service = $this->get('api.action_service');
+        $size = $request->query->getInt('size', 30);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $service->getForAccount($name, $page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
+        }
+
+        return new JsonResponse($response);
+    }
 }
