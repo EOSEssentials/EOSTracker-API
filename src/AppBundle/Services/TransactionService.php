@@ -12,7 +12,7 @@ class TransactionService extends EntityRepository
         $query = $this->getEntityManager()->createQuery(<<<DQL
 SELECT t
 FROM AppBundle\Entity\Transaction t
-ORDER BY t.createdAt DESC
+ORDER BY t.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
@@ -27,7 +27,7 @@ DQL
 SELECT t
 FROM AppBundle\Entity\Transaction t
 WHERE t.blockId = :BLOCKID
-ORDER BY t.createdAt DESC
+ORDER BY t.blockId DESC
 DQL
         )
             ->setParameter('BLOCKID', $blockNumber)

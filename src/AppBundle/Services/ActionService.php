@@ -15,7 +15,7 @@ SELECT a, aa
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
-ORDER BY att.createdAt DESC
+ORDER BY att.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
@@ -33,7 +33,7 @@ LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
 WHERE a.account = :ACCOUNT OR a.id IN (SELECT a2.id FROM AppBundle\Entity\Action a2 LEFT JOIN a2.authorizations aa2 WITH aa2.actor = :ACCOUNT)
-ORDER BY att.createdAt DESC
+ORDER BY att.blockId DESC
 DQL
         )
             ->setParameter('ACCOUNT', $account)
