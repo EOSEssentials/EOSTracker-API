@@ -36,4 +36,24 @@ class TransactionController extends Controller
 
         return new JsonResponse($item->toArray());
     }
+
+    /**
+     * @Route("/transactions/{id}/actions", name="transactions_action")
+     */
+    public function blockTransactionsAction(string $id, Request $request)
+    {
+        $service = $this->get('api.transaction_service');
+        $actionService = $this->get('api.action_service');
+        $item = $service->findOneBy(['id' => $id]);
+
+        $size = $request->query->getInt('size', 30);
+        $page = $request->query->getInt('page', 1);
+        $response = [];
+        $items = $actionService->getForTransaction($item, $page, $size);
+        foreach ($items as $item) {
+            $response[] = $item->toArray();
+        }
+
+        return new JsonResponse($response);
+    }
 }
