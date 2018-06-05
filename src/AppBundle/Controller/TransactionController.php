@@ -34,7 +34,7 @@ class TransactionController extends Controller
         $service = $this->get('api.transaction_service');
         $item = $service->findOneBy(['id' => $id]);
 
-        return new JsonResponse($item->toArray());
+        return new JsonResponse($item->toArray()); // TODO: throw exception entity not found
     }
 
     /**

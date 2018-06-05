@@ -18,9 +18,8 @@ class ProducerController extends Controller
 
         $items = $cache->get()->get('producers.action');
         if (!$items) {
-            $producersWithBlocks = [];
-
-            $cache->get()->set('producers.action', $items, self::DEFAULT_CACHE);
+            $items = $service->producers(new \DateTime('1 day ago'));
+            $cache->get()->set('producers.action', $items, 60);
         }
 
         return new JsonResponse($items);

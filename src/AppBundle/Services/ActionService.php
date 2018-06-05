@@ -20,7 +20,9 @@ ORDER BY att.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+            ->useQueryCache(true)
+            ->useResultCache(true);
 
         return new Paginator($query);
     }
@@ -39,7 +41,9 @@ DQL
         )
             ->setParameter('ACCOUNT', $account)
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+            ->useQueryCache(true)
+            ->useResultCache(true);
 
         return new Paginator($query);
     }
@@ -58,7 +62,9 @@ DQL
         )
             ->setParameter('TRANSACTION', $transaction)
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+            ->useQueryCache(true)
+            ->useResultCache(true);
 
         return new Paginator($query);
     }

@@ -29,12 +29,4 @@ class DefaultController extends Controller
 
         return new JsonResponse($result);
     }
-
-    /**
-     * @Route("/search", name="search")
-     */
-    public function searchAction(Request $request)
-    {
-        return new JsonResponse([]);
-    }
 }

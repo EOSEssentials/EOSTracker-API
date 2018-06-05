@@ -16,7 +16,9 @@ ORDER BY t.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+            ->useQueryCache(true)
+            ->useResultCache(true);
 
         return new Paginator($query);
     }
@@ -32,7 +34,9 @@ DQL
         )
             ->setParameter('BLOCKID', $blockNumber)
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
+            ->setMaxResults($limit)
+            ->useQueryCache(true)
+            ->useResultCache(true);
 
         return new Paginator($query);
     }

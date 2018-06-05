@@ -38,6 +38,17 @@ class BlockController extends Controller
     }
 
     /**
+     * @Route("/blocks/id/{id}", name="block_by_id")
+     */
+    public function blockbyIdAction(string $id)
+    {
+        $service = $this->get('api.block_service');
+        $item = $service->findOneBy(['id' => $id]);
+
+        return new JsonResponse($item->toArray());
+    }
+
+    /**
      * @Route("/blocks/{id}/transactions", name="block_transactions")
      */
     public function blockTransactionsAction(string $id, Request $request)

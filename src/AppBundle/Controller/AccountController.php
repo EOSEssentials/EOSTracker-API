@@ -39,6 +39,17 @@ class AccountController extends Controller
     }
 
     /**
+     * @Route("/accounts/key/{name}", name="account_by_key")
+     */
+    public function accountByKeyAction(string $key)
+    {
+        $service = $this->get('api.account_service');
+        $item = $service->withPublicKey($key);
+
+        return new JsonResponse($item->toArray());
+    }
+
+    /**
      * @Route("/accounts/{name}/actions", name="account_actions")
      */
     public function accountActionsAction(string $name, Request $request)
