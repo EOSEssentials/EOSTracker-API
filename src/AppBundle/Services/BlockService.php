@@ -18,7 +18,9 @@ DQL
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->useQueryCache(true)
-            ->useResultCache(true);
+            ->useResultCache(true)
+            ->setQueryCacheLifetime(5)
+            ->setResultCacheLifetime(5);
 
         return new Paginator($query);
     }
