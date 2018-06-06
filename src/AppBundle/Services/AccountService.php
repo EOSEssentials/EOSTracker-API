@@ -2,7 +2,6 @@
 
 namespace AppBundle\Services;
 
-use AppBundle\Entity\Account;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Tools\Pagination\Paginator;
 
@@ -12,14 +11,16 @@ class AccountService extends EntityRepository
     {
         $query = $this->getEntityManager()->createQuery(<<<DQL
 SELECT a
-FROM AppBundle\Entity\Account a
+FROM AppBundle\Entity\ACCOUNT a
 ORDER BY a.createdAt DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->useQueryCache(true)
-            ->useResultCache(true);
+            ->useResultCache(true)
+            ->setQueryCacheLifetime(5)
+            ->setResultCacheLifetime(5);
 
         return new Paginator($query);
     }
@@ -27,8 +28,8 @@ DQL
     public function producers(\DateTime $since)
     {
         $query = $this->getEntityManager()->createQuery(<<<DQL
-SELECT a.name, COUNT(b.producer) as num
-FROM AppBundle\Entity\Block b
+SELECT a.name, COUNT(b.producer) AS num
+FROM AppBundle\Entity\BLOCK b
 JOIN b.producer a
 WHERE b.timestamp > :since
 GROUP BY a
@@ -38,26 +39,18 @@ DQL
             ->setParameter('since', $since)
             ->useQueryCache(true)
             ->useResultCache(true)
+            ->setQueryCacheLifetime(600)
+            ->setResultCacheLifetime(600)
             ->getResult();
 
         return $query;
     }
 
-    public function withPublicKey(string $publicKey): ?Account
+    public function withPublicKey(string $publicKey): ?array
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
-SELECT a
-FROM AppBundle\Entity\Account a
-WHERE b.timestamp > :since
-GROUP BY a
-ORDER BY num DESC
-DQL
-        )
-            ->setParameter(':publicKey', $publicKey)
-            ->useQueryCache(true)
-            ->useResultCache(true)
-            ->getResult();
-
-        return $query;
+        $sql = " SELECT account FROM accounts_keys WHERE public_key = '".$publicKey."' LIMIT 1";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll();
     }
 }

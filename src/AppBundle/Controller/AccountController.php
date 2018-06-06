@@ -39,14 +39,13 @@ class AccountController extends Controller
     }
 
     /**
-     * @Route("/accounts/key/{name}", name="account_by_key")
+     * @Route("/accounts/key/{key}", name="account_by_key")
      */
     public function accountByKeyAction(string $key)
     {
         $service = $this->get('api.account_service');
         $item = $service->withPublicKey($key);
-
-        return new JsonResponse($item->toArray());
+        return new JsonResponse(['name' => isset($item[0]) ? $item[0]['account']: null]);
     }
 
     /**

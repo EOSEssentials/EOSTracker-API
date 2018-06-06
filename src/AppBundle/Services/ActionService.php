@@ -22,7 +22,9 @@ DQL
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->useQueryCache(true)
-            ->useResultCache(true);
+            ->useResultCache(true)
+            ->setQueryCacheLifetime(5)
+            ->setResultCacheLifetime(5);
 
         return new Paginator($query);
     }
@@ -35,7 +37,7 @@ FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
-WHERE a.account = :ACCOUNT OR a.id IN (SELECT a2.id FROM AppBundle\Entity\Action a2 LEFT JOIN a2.authorizations aa2 WITH aa2.actor = :ACCOUNT)
+WHERE a.account = :ACCOUNT OR a.id IN (SELECT a2.id FROM AppBundle\Entity\Action a2 JOIN a2.authorizations aa2 WITH aa2.actor = :ACCOUNT)
 ORDER BY att.blockId DESC
 DQL
         )
@@ -43,7 +45,9 @@ DQL
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->useQueryCache(true)
-            ->useResultCache(true);
+            ->useResultCache(true)
+            ->setQueryCacheLifetime(5)
+            ->setResultCacheLifetime(5);
 
         return new Paginator($query);
     }
@@ -64,7 +68,9 @@ DQL
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->useQueryCache(true)
-            ->useResultCache(true);
+            ->useResultCache(true)
+            ->setQueryCacheLifetime(600)
+            ->setResultCacheLifetime(600);
 
         return new Paginator($query);
     }

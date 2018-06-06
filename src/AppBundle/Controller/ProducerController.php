@@ -18,7 +18,8 @@ class ProducerController extends Controller
 
         $items = $cache->get()->get('producers.action');
         if (!$items) {
-            $items = $service->producers(new \DateTime('1 day ago'));
+            $items = [];
+            //$items = $service->producers(new \DateTime('1 day ago')); TODO: too expensive
             $cache->get()->set('producers.action', $items, 60);
         }
 
