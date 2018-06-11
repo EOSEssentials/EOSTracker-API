@@ -15,12 +15,17 @@ class BlockController extends Controller
     public function blocksAction(Request $request)
     {
         $service = $this->get('api.block_service');
+        $cache = $this->get('api.cache_service');
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = [];
-        $items = $service->get($page, $size);
-        foreach ($items as $item) {
-            $response[] = $item->toArray();
+        $response = $cache->get()->get('blocks'.$size.'_'.$page);
+        if (!$response) {
+            $items = $service->get($page, $size);
+            foreach ($items as $item) {
+                $response[] = $item->toArray();
+            }
+
+            $cache->get()->set('blocks'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
         }
 
         return new JsonResponse($response);
