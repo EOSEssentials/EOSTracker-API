@@ -19,7 +19,7 @@ class TransactionController extends Controller
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = $cache->get()->get('blocks'.$size.'_'.$page);
+        $response = $cache->get()->get('transaction'.$size.'_'.$page);
         if (!$response) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
