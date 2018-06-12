@@ -5,13 +5,12 @@ namespace AppBundle\Services;
 use AppBundle\Entity\Account;
 use AppBundle\Entity\Transaction;
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class ActionService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, aa
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
@@ -20,14 +19,13 @@ ORDER BY att.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
-
-        return new Paginator($query);
+            ->setMaxResults($limit)
+            ->getResult();
     }
 
     public function getForAccount(Account $account, int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, aa, att, ac
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
@@ -43,14 +41,13 @@ DQL
             ->useQueryCache(true)
             ->useResultCache(true)
             ->setQueryCacheLifetime(5)
-            ->setResultCacheLifetime(5);
-
-        return new Paginator($query);
+            ->setResultCacheLifetime(5)
+            ->getResult();
     }
 
     public function getForTransaction(Transaction $transaction, int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, aa, att, ac
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
@@ -66,8 +63,7 @@ DQL
             ->useQueryCache(true)
             ->useResultCache(true)
             ->setQueryCacheLifetime(600)
-            ->setResultCacheLifetime(600);
-
-        return new Paginator($query);
+            ->setResultCacheLifetime(600)
+            ->getResult();
     }
 }

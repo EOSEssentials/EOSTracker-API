@@ -20,6 +20,15 @@ class VoteController extends Controller
         $items = $cache->get()->get('votes_'.$producer.$page);
         if (!$items) {
             $items = $service->forProducer($producer, $page);
+            $formattedItems = [];
+            foreach($items as $item) {
+                $formattedItems[] = [
+                    'account' => $item['account'],
+                    'staked' => $item['staked'],
+                    'votes' => json_decode($item['votes'])
+                ];
+            }
+            $items = $formattedItems;
             $cache->get()->set('producers.action', $items, 60);
         }
 

@@ -9,21 +9,20 @@ class TransactionService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT t
 FROM AppBundle\Entity\Transaction t
 ORDER BY t.blockId DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
-
-        return new Paginator($query);
+            ->setMaxResults($limit)
+            ->getResult();
     }
 
     public function getForBlock(int $blockNumber, int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT t
 FROM AppBundle\Entity\Transaction t
 WHERE t.blockId = :BLOCKID
@@ -36,8 +35,7 @@ DQL
             ->useQueryCache(true)
             ->useResultCache(true)
             ->setQueryCacheLifetime(600)
-            ->setResultCacheLifetime(600);
-
-        return new Paginator($query);
+            ->setResultCacheLifetime(600)
+            ->getResult();
     }
 }

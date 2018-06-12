@@ -3,27 +3,25 @@
 namespace AppBundle\Services;
 
 use Doctrine\ORM\EntityRepository;
-use Doctrine\ORM\Tools\Pagination\Paginator;
 
 class AccountService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 30)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a
 FROM AppBundle\Entity\ACCOUNT a
 ORDER BY a.createdAt DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
-            ->setMaxResults($limit);
-
-        return new Paginator($query);
+            ->setMaxResults($limit)
+            ->getResult();
     }
 
     public function producers(\DateTime $since)
     {
-        $query = $this->getEntityManager()->createQuery(<<<DQL
+        return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a.name, COUNT(b.producer) AS num
 FROM AppBundle\Entity\BLOCK b
 JOIN b.producer a
@@ -38,8 +36,6 @@ DQL
             ->setQueryCacheLifetime(600)
             ->setResultCacheLifetime(600)
             ->getResult();
-
-        return $query;
     }
 
     public function withPublicKey(string $publicKey): ?array
