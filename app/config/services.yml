@@ -41,3 +41,11 @@ services:
       - AppBundle\Entity\Transaction
     lazy: true
     public: true
+
+  api.vote_service:
+    class: AppBundle\Services\VoteService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
+    arguments:
+      - AppBundle\Entity\Vote
+    lazy: true
+    public: true
