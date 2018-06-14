@@ -55,7 +55,7 @@ nelmio_cors:
 
 doctrine:
     dbal:
-        url: %database_url%
+        url: "%env(DB_URL)%"
         driver:   pdo_mysql
         server_version: 5.7
         charset:  UTF8
