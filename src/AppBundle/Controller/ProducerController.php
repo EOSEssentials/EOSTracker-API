@@ -25,4 +25,31 @@ class ProducerController extends Controller
 
         return new JsonResponse($items);
     }
+
+    /**
+     * @Route("/bps/{url}", name="bps", requirements={"url"=".+"})
+     */
+    public function bpsAction($url)
+    {
+        $urlParsed = parse_url($url);
+        if (!isset($urlParsed['host'], $urlParsed['scheme'])) {
+            return new JsonResponse(['error' => 'invalid url'], 400);
+        }
+
+        $urlJsonBp = $urlParsed['scheme'].'://'.$urlParsed['host'].'/bp.json';
+        $exist = false;
+        $content = apcu_fetch($urlJsonBp, $exist);
+        if ($exist) {
+            return new JsonResponse($content);
+        }
+
+        $content = json_decode(file_get_contents($urlJsonBp));
+        if (!$content || !isset($content->producer_account_name)) {
+            return new JsonResponse(['error' => 'invalid JSON'], 400);
+        }
+
+        apcu_store($urlJsonBp, $content, 300);
+
+        return new JsonResponse($content);
+    }
 }
