@@ -51,15 +51,23 @@ class TransactionController extends Controller
     {
         $service = $this->get('api.transaction_service');
         $actionService = $this->get('api.action_service');
+        $cache = $this->get('api.cache_service');
+
         $item = $service->findOneBy(['id' => $id]);
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = [];
-        $items = $actionService->getForTransaction($item, $page, $size);
-        foreach ($items as $item) {
-            $response[] = $item->toArray();
+
+        $response = $cache->get()->get('transactions_action_'.$id.'._'.$size.'_'.$page);
+        if (!$response) {
+            $items = $actionService->getForTransaction($item, $page, $size);
+            foreach ($items as $item) {
+                $response[] = $item->toArray();
+            }
+
+            $cache->get()->set('transactions_action_'.$id.'._'.$size.'_'.$page, $response, $cache::BIG_CACHING);
         }
+
 
         return new JsonResponse($response);
     }

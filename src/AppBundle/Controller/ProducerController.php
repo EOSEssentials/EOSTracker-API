@@ -2,6 +2,7 @@
 
 namespace AppBundle\Controller;
 
+use AppBundle\Services\CacheService;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
@@ -20,7 +21,7 @@ class ProducerController extends Controller
         if (!$items) {
             $items = [];
             //$items = $service->producers(new \DateTime('1 day ago')); TODO: too expensive
-            $cache->get()->set('producers.action', $items, 60);
+            $cache->get()->set('producers.action', $items, CacheService::BIG_CACHING);
         }
 
         return new JsonResponse($items);
@@ -31,15 +32,16 @@ class ProducerController extends Controller
      */
     public function bpsAction($url)
     {
+        $cache = $this->get('api.cache_service');
+
         $urlParsed = parse_url($url);
         if (!isset($urlParsed['host'], $urlParsed['scheme'])) {
             return new JsonResponse(['error' => 'invalid url'], 400);
         }
 
         $urlJsonBp = $urlParsed['scheme'].'://'.$urlParsed['host'].'/bp.json';
-        $exist = false;
-        $content = apcu_fetch($urlJsonBp, $exist);
-        if ($exist) {
+        $content = $cache->get->get($urlJsonBp);
+        if ($content) {
             return new JsonResponse($content);
         }
 
@@ -48,7 +50,7 @@ class ProducerController extends Controller
             return new JsonResponse(['error' => 'invalid JSON'], 400);
         }
 
-        apcu_store($urlJsonBp, $content, 300);
+        $cache->get()->set($urlJsonBp, $urlJsonBp, CacheService::BIG_CACHING);
 
         return new JsonResponse($content);
     }

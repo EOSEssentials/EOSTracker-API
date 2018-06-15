@@ -38,10 +38,6 @@ DQL
             ->setParameter('ACCOUNT', $account)
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
-            ->useQueryCache(true)
-            ->useResultCache(true)
-            ->setQueryCacheLifetime(5)
-            ->setResultCacheLifetime(5)
             ->getResult();
     }
 
@@ -60,10 +56,6 @@ DQL
             ->setParameter('TRANSACTION', $transaction)
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
-            ->useQueryCache(true)
-            ->useResultCache(true)
-            ->setQueryCacheLifetime(600)
-            ->setResultCacheLifetime(600)
             ->getResult();
     }
 }

@@ -62,13 +62,21 @@ class AccountController extends Controller
     {
         $service = $this->get('api.action_service');
         $accountService = $this->get('api.account_service');
+        $cache = $this->get('api.cache_service');
+
         $account = $accountService->findOneBy(['name' => $name]);
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = [];
-        $items = $service->getForAccount($account, $page, $size);
-        foreach ($items as $item) {
-            $response[] = $item->toArray();
+
+        $response = $cache->get()->get('account_'.$name.'_'.$size.'_'.$page);
+        if (!$response) {
+            $items = $service->getForAccount($account, $page, $size);
+            foreach ($items as $item) {
+                $response[] = $item->toArray();
+            }
+
+            $cache->get()->set('account_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
+
         }
 
         return new JsonResponse($response);

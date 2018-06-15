@@ -31,10 +31,6 @@ ORDER BY num DESC
 DQL
         )
             ->setParameter('since', $since)
-            ->useQueryCache(true)
-            ->useResultCache(true)
-            ->setQueryCacheLifetime(600)
-            ->setResultCacheLifetime(600)
             ->getResult();
     }
 
