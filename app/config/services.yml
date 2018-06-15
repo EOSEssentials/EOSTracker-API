@@ -49,3 +49,11 @@ services:
       - AppBundle\Entity\Vote
     lazy: true
     public: true
+
+  api.twitter_service:
+    class: AppBundle\Services\TwitterService
+    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
+    arguments:
+      - AppBundle\Entity\Vote
+    lazy: true
+    public: true
