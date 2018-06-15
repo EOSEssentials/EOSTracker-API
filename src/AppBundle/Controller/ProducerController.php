@@ -40,7 +40,7 @@ class ProducerController extends Controller
         }
 
         $urlJsonBp = $urlParsed['scheme'].'://'.$urlParsed['host'].'/bp.json';
-        $content = $cache->get()->get($urlJsonBp);
+        $content = $cache->get()->get(md5($urlJsonBp));
         if ($content) {
             return new JsonResponse($content);
         }
@@ -50,7 +50,7 @@ class ProducerController extends Controller
             return new JsonResponse(['error' => 'invalid JSON'], 400);
         }
 
-        $cache->get()->set($urlJsonBp, $urlJsonBp, CacheService::BIG_CACHING);
+        $cache->get()->set(md5($urlJsonBp), $content, CacheService::BIG_CACHING);
 
         return new JsonResponse($content);
     }
