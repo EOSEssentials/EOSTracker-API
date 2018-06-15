@@ -65,6 +65,10 @@ class AccountController extends Controller
         $cache = $this->get('api.cache_service');
 
         $account = $accountService->findOneBy(['name' => $name]);
+
+        if(!$account) {
+            return new JsonResponse('Not found', 404);
+        }
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 

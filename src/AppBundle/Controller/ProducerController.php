@@ -30,7 +30,7 @@ class ProducerController extends Controller
     /**
      * @Route("/bps/{url}", name="bps", requirements={"url"=".+"})
      */
-    public function bpsAction($url)
+    public function bpsAction(string $url)
     {
         $cache = $this->get('api.cache_service');
 
@@ -40,7 +40,7 @@ class ProducerController extends Controller
         }
 
         $urlJsonBp = $urlParsed['scheme'].'://'.$urlParsed['host'].'/bp.json';
-        $content = $cache->get->get($urlJsonBp);
+        $content = $cache->get()->get($urlJsonBp);
         if ($content) {
             return new JsonResponse($content);
         }
