@@ -72,14 +72,45 @@ class AccountController extends Controller
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 
-        $response = $cache->get()->get('account_'.$name.'_'.$size.'_'.$page);
+        $response = $cache->get()->get('account_from_'.$name.'_'.$size.'_'.$page);
         if (!$response) {
-            $items = $service->getForAccount($account, $page, $size);
+            $items = $service->getFromAccount($account, $page, $size);
             foreach ($items as $item) {
                 $response[] = $item->toArray();
             }
 
-            $cache->get()->set('account_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
+            $cache->get()->set('account_from_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
+
+        }
+
+        return new JsonResponse($response);
+    }
+
+    /**
+     * @Route("/accounts/{name}/actions/to", name="account_actions_to")
+     */
+    public function accountActionsToAction(string $name, Request $request)
+    {
+        $service = $this->get('api.action_service');
+        $accountService = $this->get('api.account_service');
+        $cache = $this->get('api.cache_service');
+
+        $account = $accountService->findOneBy(['name' => $name]);
+
+        if(!$account) {
+            return new JsonResponse('Not found', 404);
+        }
+        $size = $request->query->getInt('size', 30);
+        $page = $request->query->getInt('page', 1);
+
+        $response = $cache->get()->get('account_to_'.$name.'_'.$size.'_'.$page);
+        if (!$response) {
+            $items = $service->getToAccount($account, $page, $size);
+            foreach ($items as $item) {
+                $response[] = $item->toArray();
+            }
+
+            $cache->get()->set('account_to_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
 
         }
 

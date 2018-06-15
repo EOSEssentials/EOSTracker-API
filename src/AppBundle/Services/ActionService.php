@@ -24,7 +24,24 @@ DQL
             ->getResult();
     }
 
-    public function getForAccount(Account $account, int $page = 1, int $limit = 30)
+    public function getFromAccount(Account $account, int $page = 1, int $limit = 30)
+    {
+        return $this->getEntityManager()->createQuery(<<<DQL
+SELECT a, aa, att, ac
+FROM AppBundle\Entity\Action a
+LEFT JOIN a.authorizations aa WITH aa.actor = :ACCOUNT
+JOIN a.transaction att
+JOIN a.account ac
+ORDER BY att.blockId DESC
+DQL
+        )
+            ->setParameter('ACCOUNT', $account)
+            ->setFirstResult($limit * ($page - 1))
+            ->setMaxResults($limit)
+            ->getResult();
+    }
+
+    public function getToAccount(Account $account, int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, aa, att, ac
@@ -32,7 +49,7 @@ FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
-WHERE a.account = :ACCOUNT OR a.id IN (SELECT a2.id FROM AppBundle\Entity\Action a2 JOIN a2.authorizations aa2 WITH aa2.actor = :ACCOUNT)
+WHERE a.account = :ACCOUNT
 ORDER BY att.blockId DESC
 DQL
         )
