@@ -29,9 +29,10 @@ DQL
         return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, aa, att, ac
 FROM AppBundle\Entity\Action a
-LEFT JOIN a.authorizations aa WITH aa.actor = :ACCOUNT
+LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
+WHERE aa.actor = :ACCOUNT
 ORDER BY att.blockId DESC
 DQL
         )
