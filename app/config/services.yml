@@ -52,8 +52,7 @@ services:
 
   api.twitter_service:
     class: AppBundle\Services\TwitterService
-    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
     arguments:
-      - AppBundle\Entity\Vote
+      - "@doctrine.orm.entity_manager"
     lazy: true
     public: true
