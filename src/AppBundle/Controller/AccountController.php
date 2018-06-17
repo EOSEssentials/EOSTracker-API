@@ -41,6 +41,9 @@ class AccountController extends Controller
     {
         $service = $this->get('api.account_service');
         $item = $service->findOneBy(['name' => $name]);
+        if (!$item) {
+            return new JsonResponse(['error' => 'entity not found'], 404);
+        }
 
         return new JsonResponse($item->toArray());
     }

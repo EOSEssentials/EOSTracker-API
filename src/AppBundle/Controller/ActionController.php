@@ -40,6 +40,9 @@ class ActionController extends Controller
     {
         $service = $this->get('api.action_service');
         $item = $service->findOneBy(['id' => $id]);
+        if (!$item) {
+            return new JsonResponse(['error' => 'entity not found'], 404);
+        }
 
         return new JsonResponse($item->toArray());
 

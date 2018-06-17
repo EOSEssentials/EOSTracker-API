@@ -38,6 +38,9 @@ class BlockController extends Controller
     {
         $service = $this->get('api.block_service');
         $item = $service->findOneBy(['blockNumber' => $id]);
+        if (!$item) {
+            return new JsonResponse(['error' => 'entity not found'], 404);
+        }
 
         return new JsonResponse($item->toArray());
     }
