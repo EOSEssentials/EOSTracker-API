@@ -57,6 +57,7 @@ class Action
             'id' => $this->id(),
             'account' => $this->account()->name(),
             'transaction' => $this->transaction()->id(),
+            'blockId' => $this->transaction()->blockId(),
             'createdAt' => $this->transaction()->createdAt()->getTimestamp(),
             'name' => $this->name(),
             'data' => $this->data(),
