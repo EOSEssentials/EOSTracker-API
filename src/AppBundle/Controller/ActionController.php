@@ -38,13 +38,18 @@ class ActionController extends Controller
      */
     public function actionAction(string $id)
     {
-        $service = $this->get('api.action_service');
-        $item = $service->findOneBy(['id' => $id]);
-        if (!$item) {
-            return new JsonResponse(['error' => 'entity not found'], 404);
+        $result = $this->get('cache.app')->getItem('action_'.$id);
+        if (!$result->isHit()) {
+            $service = $this->get('api.action_service');
+            $item = $service->findOneBy(['id' => $id]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
+
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($item->toArray());
+        return new JsonResponse($result->get());
 
     }
 }

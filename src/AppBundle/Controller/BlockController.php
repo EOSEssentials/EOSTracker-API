@@ -38,13 +38,18 @@ class BlockController extends Controller
      */
     public function blockAction(string $id)
     {
-        $service = $this->get('api.block_service');
-        $item = $service->findOneBy(['blockNumber' => $id]);
-        if (!$item) {
-            return new JsonResponse(['error' => 'entity not found'], 404);
+        $result = $this->get('cache.app')->getItem('block_'.$id);
+        if (!$result->isHit()) {
+            $service = $this->get('api.block_service');
+            $item = $service->findOneBy(['blockNumber' => $id]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
+
+            $this->get('cache.app')->save($item->toArray());
         }
 
-        return new JsonResponse($item->toArray());
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -63,15 +68,19 @@ class BlockController extends Controller
      */
     public function blockTransactionsAction(string $id, Request $request)
     {
-        $service = $this->get('api.transaction_service');
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = [];
-        $items = $service->getForBlock($id, $page, $size);
-        foreach ($items as $item) {
-            $response[] = $item->toArray();
+        $result = $this->get('cache.app')->getItem('block_transaction_'.$id.'_'.$page.'_'.$size);
+        if (!$result->isHit()) {
+            $service = $this->get('api.transaction_service');
+            $response = [];
+            $items = $service->getForBlock($id, $page, $size);
+            foreach ($items as $item) {
+                $response[] = $item->toArray();
+            }
+            $this->get('cache.app')->save($response);
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 }

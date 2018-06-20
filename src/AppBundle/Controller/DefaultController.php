@@ -21,7 +21,7 @@ class DefaultController extends Controller
                 $this->get('api.account_service')->count([]),
                 $this->get('api.action_service')->count([]),
             ];
-            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $result->set($data)->expiresAfter(new \DateInterval('PT15S'));
             $this->get('cache.app')->save($result);
         }
 

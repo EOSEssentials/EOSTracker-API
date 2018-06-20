@@ -20,7 +20,7 @@ class AccountController extends Controller
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 
-        $result = $this->get('cache.app')->getItem('account'.$size.'_'.$page);
+        $result = $this->get('cache.app')->getItem('accounts_'.$size.'_'.$page);
         if (!$result->isHit()) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
@@ -40,13 +40,19 @@ class AccountController extends Controller
      */
     public function accountAction(string $name)
     {
-        $service = $this->get('api.account_service');
-        $item = $service->findOneBy(['name' => $name]);
-        if (!$item) {
-            return new JsonResponse(['error' => 'entity not found'], 404);
+        $result = $this->get('cache.app')->getItem('account_'.$name);
+        if (!$result->isHit()) {
+            $service = $this->get('api.account_service');
+            $item = $service->findOneBy(['name' => $name]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
+
+            $this->get('cache.app')->save($item->toArray());
         }
 
-        return new JsonResponse($item->toArray());
+
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -56,7 +62,8 @@ class AccountController extends Controller
     {
         $service = $this->get('api.account_service');
         $item = $service->withPublicKey($key);
-        return new JsonResponse(['name' => isset($item[0]) ? $item[0]['account']: null]);
+
+        return new JsonResponse(['name' => isset($item[0]) ? $item[0]['account'] : null]);
     }
 
     /**
@@ -70,7 +77,7 @@ class AccountController extends Controller
 
         $account = $accountService->findOneBy(['name' => $name]);
 
-        if(!$account) {
+        if (!$account) {
             return new JsonResponse('Not found', 404);
         }
         $size = $request->query->getInt('size', 30);
@@ -101,7 +108,7 @@ class AccountController extends Controller
 
         $account = $accountService->findOneBy(['name' => $name]);
 
-        if(!$account) {
+        if (!$account) {
             return new JsonResponse('Not found', 404);
         }
         $size = $request->query->getInt('size', 30);

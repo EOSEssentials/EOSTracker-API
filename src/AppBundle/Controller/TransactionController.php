@@ -19,7 +19,7 @@ class TransactionController extends Controller
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $result = $this->get('cache.app')->getItem('transaction'.$size.'_'.$page);
+        $result = $this->get('cache.app')->getItem('transactions_'.$size.'_'.$page);
         if (!$result->isHit()) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
@@ -30,7 +30,6 @@ class TransactionController extends Controller
             $this->get('cache.app')->save($result);
         }
 
-
         return new JsonResponse($result->get());
     }
 
@@ -39,12 +38,17 @@ class TransactionController extends Controller
      */
     public function transactionAction(string $id)
     {
-        $service = $this->get('api.transaction_service');
-        $item = $service->findOneBy(['id' => $id]);
-        if (!$item) {
-            return new JsonResponse(['error' => 'entity not found'], 404);
+        $result = $this->get('cache.app')->getItem('transaction_'.$id);
+        if (!$result->isHit()) {
+            $service = $this->get('api.transaction_service');
+            $item = $service->findOneBy(['id' => $id]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
+            $this->get('cache.app')->save($item->toArray());
         }
-        return new JsonResponse($item->toArray());
+
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -67,8 +71,6 @@ class TransactionController extends Controller
             foreach ($items as $item) {
                 $data[] = $item->toArray();
             }
-
-            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
             $this->get('cache.app')->save($result);
         }
 
