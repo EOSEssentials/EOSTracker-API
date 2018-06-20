@@ -58,10 +58,19 @@ class BlockController extends Controller
      */
     public function blockbyIdAction(string $id)
     {
-        $service = $this->get('api.block_service');
-        $item = $service->findOneBy(['id' => $id]);
+        $result = $this->get('cache.app')->getItem('block_id_'.$id);
+        if (!$result->isHit()) {
+            $service = $this->get('api.block_service');
+            $item = $service->findOneBy(['id' => $id]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
 
-        return new JsonResponse($item->toArray());
+            $result->set($item->toArray());
+            $this->get('cache.app')->save($result);
+        }
+
+        return new JsonResponse($result->get());
     }
 
     /**
