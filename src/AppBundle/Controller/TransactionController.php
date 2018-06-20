@@ -15,22 +15,23 @@ class TransactionController extends Controller
     public function transactionsAction(Request $request)
     {
         $service = $this->get('api.transaction_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = $cache->get()->get('transaction'.$size.'_'.$page);
-        if (!$response) {
+        $result = $this->get('cache.app')->getItem('transaction'.$size.'_'.$page);
+        if (!$result->isHit()) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
-            $cache->get()->set('transaction'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
 
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -53,24 +54,24 @@ class TransactionController extends Controller
     {
         $service = $this->get('api.transaction_service');
         $actionService = $this->get('api.action_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $item = $service->findOneBy(['id' => $id]);
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 
-        $response = $cache->get()->get('transactions_action_'.$id.'._'.$size.'_'.$page);
-        if (!$response) {
+        $result = $this->get('cache.app')->getItem('transactions_action_'.$id.'._'.$size.'_'.$page);
+        if (!$result->isHit()) {
             $items = $actionService->getForTransaction($item, $page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
 
-            $cache->get()->set('transactions_action_'.$id.'._'.$size.'_'.$page, $response, $cache::BIG_CACHING);
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 }

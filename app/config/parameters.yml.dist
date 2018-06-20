@@ -5,3 +5,4 @@ parameters:
     # A secret key that's used to generate certain security-related tokens
     secret: ThisTokenIsNotSoSecretChangeIt
     env(DB_URL): 'mysql://root@localhost/eos'
+    env(REDIS_URL): 'redis://root@localhost:423432'

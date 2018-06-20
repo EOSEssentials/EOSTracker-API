@@ -15,22 +15,23 @@ class AccountController extends Controller
     public function accountsAction(Request $request)
     {
         $service = $this->get('api.account_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = $cache->get()->get('account'.$size.'_'.$page);
-        if (!$response) {
+
+        $result = $this->get('cache.app')->getItem('account'.$size.'_'.$page);
+        if (!$result->isHit()) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
 
-            $cache->get()->set('accounts'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
-
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
 
     }
 
@@ -65,7 +66,7 @@ class AccountController extends Controller
     {
         $service = $this->get('api.action_service');
         $accountService = $this->get('api.account_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $account = $accountService->findOneBy(['name' => $name]);
 
@@ -75,18 +76,18 @@ class AccountController extends Controller
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 
-        $response = $cache->get()->get('account_from_'.$name.'_'.$size.'_'.$page);
-        if (!$response) {
+        $result = $this->get('cache.app')->getItem('account_from_'.$name.'_'.$size.'_'.$page);
+        if (!$result->isHit()) {
             $items = $service->getFromAccount($account, $page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
 
-            $cache->get()->set('account_from_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
-
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -96,7 +97,7 @@ class AccountController extends Controller
     {
         $service = $this->get('api.action_service');
         $accountService = $this->get('api.account_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $account = $accountService->findOneBy(['name' => $name]);
 
@@ -106,17 +107,18 @@ class AccountController extends Controller
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
 
-        $response = $cache->get()->get('account_to_'.$name.'_'.$size.'_'.$page);
-        if (!$response) {
+        $result = $this->get('cache.app')->getItem('account_to_'.$name.'_'.$size.'_'.$page);
+
+        if (!$result->isHit()) {
             $items = $service->getToAccount($account, $page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
 
-            $cache->get()->set('account_to_'.$name.'_'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
-
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 }

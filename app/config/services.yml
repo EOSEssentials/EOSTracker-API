@@ -2,9 +2,6 @@ parameters:
     #parameter_name: value
 
 services:
-  api.cache_service:
-    class: AppBundle\Services\ApcuCacheService # AppBundle\Services\NullCacheService
-
   api.fixtures.accounts:
     class: AppBundle\DataFixtures\AccountFixtures
     tags: [doctrine.fixture.orm]

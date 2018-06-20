@@ -30,6 +30,10 @@ framework:
     assets: ~
     php_errors:
         log: true
+    cache:
+        app: cache.adapter.redis
+        default_redis_provider: 'redis://h:pf9377c1ef9f52c5b844d04478271fd6a024ed367e1d1b423d6e7f88ba8e65269@ec2-52-23-66-23.compute-1.amazonaws.com:30769'
+
 
 # Twig Configuration
 twig:
@@ -53,6 +57,28 @@ nelmio_cors:
             allow_methods: ['GET']
             max_age: 3600
 
+snc_redis:
+    clients:
+        default:
+            type: phpredis
+            alias: default
+            dsn: 'redis://h:pf9377c1ef9f52c5b844d04478271fd6a024ed367e1d1b423d6e7f88ba8e65269@ec2-52-23-66-23.compute-1.amazonaws.com:30769'
+            #dsn: "%env(REDIS_URL)%"
+    doctrine:
+        metadata_cache:
+            client: default
+            entity_manager: default          # the name of your entity_manager connection
+            document_manager: default        # the name of your document_manager connection
+        result_cache:
+            client: default
+            entity_manager: [default, read]  # you may specify multiple entity_managers
+        query_cache:
+            client: default
+            entity_manager: default
+        second_level_cache:
+            client: default
+            entity_manager: default
+
 doctrine:
     dbal:
         url: "%env(DB_URL)%"
@@ -61,9 +87,9 @@ doctrine:
         charset:  UTF8
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        metadata_cache_driver: apcu # enable clear cache if changed
-        query_cache_driver: apcu # enable clear cache if changed
-        result_cache_driver: apcu # enable clear cache if changed
+        metadata_cache_driver: redis # enable clear cache if changed
+        query_cache_driver: redis # enable clear cache if changed
+        result_cache_driver: redis # enable clear cache if changed
         naming_strategy: doctrine.orm.naming_strategy.underscore
         dql:
           string_functions:

@@ -14,11 +14,10 @@ class VoteController extends Controller
      */
     public function votesAction(string $producer, Request $request)
     {
-        $cache = $this->get('api.cache_service');
         $service = $this->get('api.vote_service');
         $page = $request->query->getInt('page', 0);
-        $items = $cache->get()->get('votes_'.$producer.$page);
-        if (!$items) {
+        $result = $this->get('cache.app')->getItem('votes_'.$producer.$page);
+        if (!$result->isHit()) {
             $items = $service->forProducer($producer, $page);
             $formattedItems = [];
             foreach($items as $item) {
@@ -29,9 +28,10 @@ class VoteController extends Controller
                 ];
             }
             $items = $formattedItems;
-            $cache->get()->set('producers.action', $items, 60);
+            $result->set($items)->expiresAfter(new \DateInterval('PT60S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($items);
+        return new JsonResponse($result->get());
     }
 }

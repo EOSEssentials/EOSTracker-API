@@ -15,22 +15,22 @@ class ActionController extends Controller
     public function actionsAction(Request $request)
     {
         $service = $this->get('api.action_service');
-        $cache = $this->get('api.cache_service');
+        $data = [];
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
-        $response = $cache->get()->get('action'.$size.'_'.$page);
-        if (!$response) {
+        $result = $this->get('cache.app')->getItem('action'.$size.'_'.$page);
+        if (!$result->isHit()) {
             $items = $service->get($page, $size);
             foreach ($items as $item) {
-                $response[] = $item->toArray();
+                $data[] = $item->toArray();
             }
 
-            $cache->get()->set('action'.$size.'_'.$page, $response, $cache::DEFAULT_CACHING);
-
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($response);
+        return new JsonResponse($result->get());
     }
 
     /**

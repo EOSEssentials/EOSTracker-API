@@ -17,6 +17,7 @@ class AppKernel extends Kernel
             new Nelmio\CorsBundle\NelmioCorsBundle(),
             new Doctrine\Bundle\DoctrineBundle\DoctrineBundle(),
             new Stof\DoctrineExtensionsBundle\StofDoctrineExtensionsBundle(),
+            new Snc\RedisBundle\SncRedisBundle(),
             new AppBundle\AppBundle()
         ];
 

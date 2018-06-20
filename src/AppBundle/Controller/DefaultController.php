@@ -13,19 +13,18 @@ class DefaultController extends Controller
      */
     public function statsAction()
     {
-        $cache = $this->get('api.cache_service');
-
-        $result = $cache->get()->get('stats.action');
-        if (!$result) {
-            $result = [
+        $result = $this->get('cache.app')->getItem('stats.action');
+        if (!$result->isHit()) {
+            $data = [
                 $this->get('api.block_service')->count([]),
                 $this->get('api.transaction_service')->count([]),
                 $this->get('api.account_service')->count([]),
                 $this->get('api.action_service')->count([]),
             ];
-            $cache->get()->set('stats.action', $result, $cache::DEFAULT_CACHING);
+            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $this->get('cache.app')->save($result);
         }
 
-        return new JsonResponse($result);
+        return new JsonResponse($result->get());
     }
 }
