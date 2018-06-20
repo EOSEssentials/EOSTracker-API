@@ -47,8 +47,8 @@ class AccountController extends Controller
             if (!$item) {
                 return new JsonResponse(['error' => 'entity not found'], 404);
             }
-
-            $this->get('cache.app')->save($item->toArray());
+            $result->set($item->toArray());
+            $this->get('cache.app')->save($result);
         }
 
 

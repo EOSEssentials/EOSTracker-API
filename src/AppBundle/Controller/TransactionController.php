@@ -45,7 +45,9 @@ class TransactionController extends Controller
             if (!$item) {
                 return new JsonResponse(['error' => 'entity not found'], 404);
             }
-            $this->get('cache.app')->save($item->toArray());
+
+            $result->set($item->toArray());
+            $this->get('cache.app')->save($result);
         }
 
         return new JsonResponse($result->get());
@@ -71,6 +73,8 @@ class TransactionController extends Controller
             foreach ($items as $item) {
                 $data[] = $item->toArray();
             }
+
+            $result->set($data);
             $this->get('cache.app')->save($result);
         }
 

@@ -46,6 +46,7 @@ class ActionController extends Controller
                 return new JsonResponse(['error' => 'entity not found'], 404);
             }
 
+            $result->set($item->toArray());
             $this->get('cache.app')->save($result);
         }
 
