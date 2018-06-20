@@ -32,7 +32,7 @@ framework:
         log: true
     cache:
         app: cache.adapter.redis
-        default_redis_provider: 'redis://h:pf9377c1ef9f52c5b844d04478271fd6a024ed367e1d1b423d6e7f88ba8e65269@ec2-52-23-66-23.compute-1.amazonaws.com:30769'
+        default_redis_provider: "%env(REDIS_URL)%"
 
 
 # Twig Configuration
@@ -62,8 +62,7 @@ snc_redis:
         default:
             type: phpredis
             alias: default
-            dsn: 'redis://h:pf9377c1ef9f52c5b844d04478271fd6a024ed367e1d1b423d6e7f88ba8e65269@ec2-52-23-66-23.compute-1.amazonaws.com:30769'
-            #dsn: "%env(REDIS_URL)%"
+            dsn: "%env(REDIS_URL)%"
     doctrine:
         metadata_cache:
             client: default
