@@ -11,9 +11,8 @@ class ActionService extends EntityRepository
     public function get(int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-SELECT a, aa, att, acc
+SELECT a, att, acc
 FROM AppBundle\Entity\Action a
-LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account acc
 ORDER BY att.blockId DESC

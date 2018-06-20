@@ -26,7 +26,7 @@ class ActionController extends Controller
                 $data[] = $item->toArray();
             }
 
-            $result->set($data)->expiresAfter(new \DateInterval('PT10S'));
+            $result->set($data)->expiresAfter(new \DateInterval('PT15S'));
             $this->get('cache.app')->save($result);
         }
 
