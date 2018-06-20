@@ -64,9 +64,9 @@ doctrine:
         charset:  UTF8
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
-        metadata_cache_driver: redis # enable clear cache if changed
-        query_cache_driver: redis # enable clear cache if changed
-        result_cache_driver: redis # enable clear cache if changed
+        metadata_cache_driver: apcu # enable clear cache if changed
+        query_cache_driver: apcu # enable clear cache if changed
+        result_cache_driver: apcu # enable clear cache if changed
         naming_strategy: doctrine.orm.naming_strategy.underscore
         dql:
           string_functions:
