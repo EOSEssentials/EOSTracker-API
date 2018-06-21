@@ -44,7 +44,7 @@ DQL
     public function countLast(int $hours): int
     {
         $datetime = new \DateTime('-'.$hours.' hours');
-        $sql = "SELECT count(id) as cant FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE t.created_at > '".date_format($datetime, 'Y-m-d H:i:s')."' LIMIT 1";
+        $sql = "SELECT count(a.id) as cant FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE t.created_at > '".date_format($datetime, 'Y-m-d H:i:s')."' LIMIT 1";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
