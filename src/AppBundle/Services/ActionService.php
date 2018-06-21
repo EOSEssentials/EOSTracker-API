@@ -10,6 +10,7 @@ class ActionService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 30)
     {
+        return []; // TODO: fix actions table
         return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, att, acc
 FROM AppBundle\Entity\Action a
