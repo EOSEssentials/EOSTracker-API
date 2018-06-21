@@ -27,4 +27,19 @@ class DefaultController extends Controller
 
         return new JsonResponse($result->get());
     }
+
+    /**
+     * @Route("/stats/actions/{hours}", name="stats_actions")
+     */
+    public function statsActionsAction(string $hours)
+    {
+        $result = $this->get('cache.app')->getItem('stats.actions_'.$hours);
+        if (!$result->isHit()) {
+            $data = $this->get('api.action_service')->countLast((int)$hours);
+            $result->set($data)->expiresAfter(new \DateInterval('PT600S'));
+            $this->get('cache.app')->save($result);
+        }
+
+        return new JsonResponse($result->get());
+    }
 }

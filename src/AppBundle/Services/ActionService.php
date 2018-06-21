@@ -41,6 +41,17 @@ DQL
             ->getResult();
     }
 
+    public function countLast(int $hours): int
+    {
+        $datetime = new \DateTime('-'.$hours.' hours');
+        $sql = "SELECT count(id) as cant FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE t.created_at > ".date_format($datetime, 'Y-m-d H:i:s')." LIMIT 1";
+        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
+        $stmt->execute();
+        $result = $stmt->fetchAll();
+        return ($result) ? $result[0]['cant']: 0;
+
+    }
+
     public function getToAccount(Account $account, int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
