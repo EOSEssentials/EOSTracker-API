@@ -40,9 +40,9 @@ class TwitterController extends Controller
 
         $avatar = $service->avatarForUser($username);
         if ($avatar) {
-            $this->redirect('https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150');
+            return $this->redirect('https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150');
         }
-        $this->redirect('https://api.adorable.io/avatars/102/'.$username.'@adorable.png');
+        return $this->redirect('https://api.adorable.io/avatars/102/'.$username.'@adorable.png');
     }
 
     private function removeHttp($url) {
