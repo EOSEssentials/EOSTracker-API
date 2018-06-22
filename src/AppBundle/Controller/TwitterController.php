@@ -3,10 +3,8 @@
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TwitterController extends Controller
@@ -25,11 +23,12 @@ class TwitterController extends Controller
             $result->set($data)->expiresAfter(new \DateInterval('PT3S'));
             $this->get('cache.app')->save($result);
         }
+
         return new JsonResponse($result->get());
     }
 
     /**
-     * @Route("/tweets-stats", name="tweets_stats")
+     * @Route("/tweets/stats", name="tweets_stats")
      */
     public function tweetsStatsAction()
     {
@@ -42,7 +41,7 @@ class TwitterController extends Controller
             $this->get('cache.app')->save($result);
         }
 
-        return $this->redirect($result->get());
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -52,6 +51,7 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
         $page = $request->query->getInt('page', 0);
+
         return new JsonResponse($service->forUser($username, $page));
     }
 
@@ -90,16 +90,18 @@ class TwitterController extends Controller
             $this->get('cache.app')->save($result);
         }
 
-        return $this->redirect($result->get());
+        return new JsonResponse($result->get());
     }
 
-    private function removeHttp($url) {
+    private function removeHttp($url)
+    {
         $disallowed = array('http://', 'https://');
-        foreach($disallowed as $d) {
-            if(strpos($url, $d) === 0) {
+        foreach ($disallowed as $d) {
+            if (strpos($url, $d) === 0) {
                 return str_replace($d, '', $url);
             }
         }
+
         return $url;
     }
 }
