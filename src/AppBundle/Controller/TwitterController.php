@@ -29,7 +29,7 @@ class TwitterController extends Controller
     }
 
     /**
-     * @Route("/tweets/stats", name="tweets_stats")
+     * @Route("/tweets-stats", name="tweets_stats")
      */
     public function tweetsStatsAction()
     {
