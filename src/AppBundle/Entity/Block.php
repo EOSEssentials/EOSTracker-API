@@ -14,6 +14,8 @@ class Block
     private $producer;
     private $numTransactions;
     private $confirmed;
+    private $version;
+    private $newProducers;
 
     public function __construct(
         string $id,
@@ -35,8 +37,10 @@ class Block
         $this->transactionMerkleRoot = $transactionMerkleRoot;
         $this->actionMerkleRoot = $actionMerkleRoot;
         $this->producer = $producer;
+        $this->version = 0;
         $this->numTransactions = $numTransactions;
         $this->confirmed = $confirmed;
+        $this->newProducers = [];
     }
 
     public function id(): string
@@ -52,6 +56,16 @@ class Block
     public function blockNumber(): int
     {
         return $this->blockNumber;
+    }
+
+    public function newProducers(): array
+    {
+        return $this->new_producers;
+    }
+
+    public function version(): int
+    {
+        return $this->version;
     }
 
     public function irreversible(): bool
@@ -100,6 +114,8 @@ class Block
             'transactionMerkleRoot' => $this->transactionMerkleRoot(),
             'actionMerkleRoot' => $this->actionMerkleRoot(),
             'producer' => $this->producer()->name(),
+            'version' => $this->version(),
+            'newProducers' => $this->newProducers(),
             'numTransactions' => $this->numTransactions(),
             'confirmed' => $this->confirmed(),
         ];

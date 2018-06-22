@@ -20,6 +20,11 @@ AppBundle\Entity\Block:
             type: string
         numTransactions:
             type: integer
+        version:
+            type: integer
+        newProducers:
+            type: json
+            nullable: true
         confirmed:
             type: integer
     manyToOne:

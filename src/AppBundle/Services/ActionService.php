@@ -10,13 +10,12 @@ class ActionService extends EntityRepository
 {
     public function get(int $page = 1, int $limit = 30)
     {
-        return []; // TODO: fix actions table
         return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a, att, acc
 FROM AppBundle\Entity\Action a
 JOIN a.transaction att
 JOIN a.account acc
-ORDER BY att.blockId DESC
+ORDER BY a.id DESC
 DQL
         )
             ->setFirstResult($limit * ($page - 1))
@@ -33,7 +32,7 @@ LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
 WHERE aa.actor = :ACCOUNT
-ORDER BY att.blockId DESC
+ORDER BY a.id DESC
 DQL
         )
             ->setParameter('ACCOUNT', $account)
@@ -62,7 +61,7 @@ LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
 WHERE a.account = :ACCOUNT
-ORDER BY att.blockId DESC
+ORDER BY a.id DESC
 DQL
         )
             ->setParameter('ACCOUNT', $account)
@@ -80,7 +79,7 @@ LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
 WHERE a.transaction = :TRANSACTION
-ORDER BY att.blockId DESC
+ORDER BY a.id DESC
 DQL
         )
             ->setParameter('TRANSACTION', $transaction)

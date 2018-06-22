@@ -4,13 +4,17 @@ AppBundle\Entity\Action:
     repositoryClass: AppBundle\Services\ActionService
     id:
         id:
-            type: string
+            type: integer
     fields:
         data:
             type: json
             nullable: true
         name:
             type: string
+        createdAt:
+            type: datetime
+        seq:
+            type: integer
     manyToOne:
         account:
             targetEntity: AppBundle\Entity\Account
