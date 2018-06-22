@@ -29,6 +29,23 @@ class TwitterController extends Controller
     }
 
     /**
+     * @Route("/tweets/stats", name="tweets_stats")
+     */
+    public function tweetsStatsAction()
+    {
+        $service = $this->get('api.twitter_service');
+
+        $result = $this->get('cache.app')->getItem('tweets_stats');
+        if (!$result->isHit()) {
+            $data = $service->stats();
+            $result->set($data)->expiresAfter(new \DateInterval('PT120S'));
+            $this->get('cache.app')->save($result);
+        }
+
+        return $this->redirect($result->get());
+    }
+
+    /**
      * @Route("/tweets/{username}", name="tweets_user")
      */
     public function tweetsUserAction(string $username, Request $request)
@@ -53,23 +70,6 @@ class TwitterController extends Controller
                 $url = 'https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150';
             }
             $result->set($url)->expiresAfter(new \DateInterval('PT30S'));
-            $this->get('cache.app')->save($result);
-        }
-
-        return $this->redirect($result->get());
-    }
-
-    /**
-     * @Route("/tweets/stats", name="tweets_stats")
-     */
-    public function tweetsStatsAction()
-    {
-        $service = $this->get('api.twitter_service');
-
-        $result = $this->get('cache.app')->getItem('tweets_stats');
-        if (!$result->isHit()) {
-            $data = $service->stats();
-            $result->set($data)->expiresAfter(new \DateInterval('PT120S'));
             $this->get('cache.app')->save($result);
         }
 
