@@ -18,7 +18,14 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
         $page = $request->query->getInt('page', 0);
-        return new JsonResponse($service->all($page));
+
+        $result = $this->get('cache.app')->getItem('tweets_'.$page);
+        if (!$result->isHit()) {
+            $data = $service->all($page);
+            $result->set($data)->expiresAfter(new \DateInterval('PT3S'));
+            $this->get('cache.app')->save($result);
+        }
+        return new JsonResponse($result->get());
     }
 
     /**
@@ -38,11 +45,18 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
 
-        $avatar = $service->avatarForUser($username);
-        if ($avatar) {
-            return $this->redirect('https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150');
+        $result = $this->get('cache.app')->getItem('tweets_avatar_'.$username);
+        if (!$result->isHit()) {
+            $url = 'https://api.adorable.io/avatars/102/'.$username.'@adorable.png';
+            $avatar = $service->avatarForUser($username);
+            if ($avatar) {
+                $url = 'https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150';
+            }
+            $result->set($url)->expiresAfter(new \DateInterval('PT30S'));
+            $this->get('cache.app')->save($result);
         }
-        return $this->redirect('https://api.adorable.io/avatars/102/'.$username.'@adorable.png');
+
+        return $this->redirect($result->get());
     }
 
     private function removeHttp($url) {
