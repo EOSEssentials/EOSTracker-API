@@ -83,7 +83,7 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
 
-        $result = $this->get('cache.app')->getItem('tweets_avatar_'.$username);
+        $result = $this->get('cache.app')->getItem('tweets_user_stats_'.$username);
         if (!$result->isHit()) {
             $data = $service->statsForUser($username);
             $result->set($data)->expiresAfter(new \DateInterval('PT60S'));
