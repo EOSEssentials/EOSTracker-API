@@ -39,14 +39,19 @@ class TwitterController extends Controller
         $service = $this->get('api.twitter_service');
 
         $avatar = $service->avatarForUser($username);
-        /* if ($avatar) {
-
+        if ($avatar) {
+            $this->redirect('https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150');
         }
+        $this->redirect('https://api.adorable.io/avatars/102/'.$username.'@adorable.png');
+    }
 
-        $response = new BinaryFileResponse($filePath);
-        $response->headers->set('Content-Type', 'image/png';
-        $response->setContentDisposition(ResponseHeaderBag::DISPOSITION_INLINE);
-        */
-        return new JsonResponse([$avatar]);
+    private function removeHttp($url) {
+        $disallowed = array('http://', 'https://');
+        foreach($disallowed as $d) {
+            if(strpos($url, $d) === 0) {
+                return str_replace($d, '', $url);
+            }
+        }
+        return $url;
     }
 }
