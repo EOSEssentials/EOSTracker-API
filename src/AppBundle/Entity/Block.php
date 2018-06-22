@@ -58,9 +58,9 @@ class Block
         return $this->blockNumber;
     }
 
-    public function newProducers(): array
+    public function newProducers(): ?array
     {
-        return $this->new_producers;
+        return $this->newProducers;
     }
 
     public function version(): int
