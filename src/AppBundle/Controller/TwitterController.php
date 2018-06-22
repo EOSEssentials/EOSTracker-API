@@ -59,6 +59,40 @@ class TwitterController extends Controller
         return $this->redirect($result->get());
     }
 
+    /**
+     * @Route("/tweets/stats", name="tweets_stats")
+     */
+    public function tweetsStatsAction()
+    {
+        $service = $this->get('api.twitter_service');
+
+        $result = $this->get('cache.app')->getItem('tweets_stats');
+        if (!$result->isHit()) {
+            $data = $service->stats();
+            $result->set($data)->expiresAfter(new \DateInterval('PT120S'));
+            $this->get('cache.app')->save($result);
+        }
+
+        return $this->redirect($result->get());
+    }
+
+    /**
+     * @Route("/tweets/{username}/stats", name="tweets_user_stats")
+     */
+    public function tweetsUserStatsAction(string $username)
+    {
+        $service = $this->get('api.twitter_service');
+
+        $result = $this->get('cache.app')->getItem('tweets_avatar_'.$username);
+        if (!$result->isHit()) {
+            $data = $service->statsForUser($username);
+            $result->set($data)->expiresAfter(new \DateInterval('PT60S'));
+            $this->get('cache.app')->save($result);
+        }
+
+        return $this->redirect($result->get());
+    }
+
     private function removeHttp($url) {
         $disallowed = array('http://', 'https://');
         foreach($disallowed as $d) {
