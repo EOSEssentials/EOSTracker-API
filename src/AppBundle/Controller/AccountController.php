@@ -47,7 +47,7 @@ class AccountController extends Controller
             if (!$item) {
                 return new JsonResponse(['error' => 'entity not found'], 404);
             }
-            $result->set($item->toArray());
+            $result->set($item->toArray())->expiresAfter(new \DateInterval('PT10S'));
             $this->get('cache.app')->save($result);
         }
 
