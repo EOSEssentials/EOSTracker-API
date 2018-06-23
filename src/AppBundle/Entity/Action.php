@@ -55,7 +55,7 @@ class Action
         return $this->name;
     }
 
-    public function data(): ?array
+    public function data()
     {
         return $this->data;
     }
