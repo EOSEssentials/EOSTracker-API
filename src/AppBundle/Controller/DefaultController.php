@@ -19,7 +19,7 @@ class DefaultController extends Controller
                 $this->get('api.block_service')->count([]),
                 $this->get('api.transaction_service')->count([]),
                 $this->get('api.account_service')->count([]),
-                $this->get('api.action_service')->count(['parentId' => 0]),
+                $this->get('api.action_service')->count([]),
             ];
             $result->set($data)->expiresAfter(new \DateInterval('PT15S'));
             $this->get('cache.app')->save($result);
