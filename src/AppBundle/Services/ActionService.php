@@ -15,6 +15,7 @@ SELECT a, att, acc
 FROM AppBundle\Entity\Action a
 JOIN a.transaction att
 JOIN a.account acc
+WHERE a.parentId = 0
 ORDER BY a.id DESC
 DQL
         )
@@ -44,7 +45,7 @@ DQL
     public function countLast(int $hours): int
     {
         $datetime = new \DateTime('-'.$hours.' hours');
-        $sql = "SELECT count(a.id) as cant FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE t.created_at > '".date_format($datetime, 'Y-m-d H:i:s')."' LIMIT 1";
+        $sql = "SELECT count(a.id) as cant FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE a.parent_id = 0 AND t.created_at > '".date_format($datetime, 'Y-m-d H:i:s')."' LIMIT 1";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();

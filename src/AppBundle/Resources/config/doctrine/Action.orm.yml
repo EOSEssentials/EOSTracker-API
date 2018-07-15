@@ -11,9 +11,9 @@ AppBundle\Entity\Action:
             nullable: true
         name:
             type: string
-        createdAt:
-            type: datetime
         seq:
+            type: integer
+        parentId:
             type: integer
     manyToOne:
         account:

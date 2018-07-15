@@ -2,15 +2,19 @@
 
 namespace AppBundle\Services;
 
-use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\EntityManager;
 
-class VoteService extends EntityRepository
+class VoteService
 {
+    private $entityManager;
+
+    public function __construct(EntityManager $entityManager)
+    {
+        $this->entityManager = $entityManager;
+    }
+
     public function forProducer(string $producer, int $page = 0): ?array
     {
-        $sql = " SELECT v.account, (net+cpu) as staked, votes FROM votes v JOIN stakes s ON s.account = v.account WHERE JSON_CONTAINS(votes, '[\"". $producer ."\"]') ORDER BY staked DESC LIMIT 50 OFFSET ".$page * 50;
-        $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        return [];
     }
 }

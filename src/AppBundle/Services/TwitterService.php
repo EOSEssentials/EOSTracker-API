@@ -16,7 +16,16 @@ class TwitterService
 
     public function all(int $page = 0): ?array
     {
-        $sql = "SELECT a.id, UNIX_TIMESTAMP(a.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(a.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $stmt = $this->entityManager->getConnection()->prepare($sql);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function replies(array $tweetIds): ?array
+    {
+        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(a.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
 
@@ -25,7 +34,7 @@ class TwitterService
 
     public function forUser(string $account, int $page = 0): ?array
     {
-        $sql = "SELECT a.id, UNIX_TIMESTAMP(a.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND aa.actor='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(a.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND aa.actor='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
 

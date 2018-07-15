@@ -8,12 +8,12 @@ class Action
     private $account;
     private $transaction;
     private $name;
-    private $createdAt;
     private $data;
     private $authorizations;
     private $seq;
+    private $parentId;
 
-    public function __construct(int $id, Account $account, Transaction $transaction, string $name, array $data,\DateTime $createdAt, int $seq = 0)
+    public function __construct(int $id, Account $account, Transaction $transaction, string $name, array $data, int $seq = 0, int $parentId = 0)
     {
         $this->id = $id;
         $this->account = $account;
@@ -22,7 +22,7 @@ class Action
         $this->data = $data;
         $this->authorizations = [];
         $this->seq = $seq;
-        $this->createdAt = $createdAt;
+        $this->parentId = $parentId;
     }
 
     public function id(): int
@@ -30,9 +30,9 @@ class Action
         return $this->id;
     }
 
-    public function createdAt(): \DateTime
+    public function parentId(): int
     {
-        return $this->createdAt;
+        return $this->parentId;
     }
 
     public function seq(): int
@@ -73,7 +73,8 @@ class Action
             'account' => $this->account()->name(),
             'transaction' => $this->transaction()->id(),
             'blockId' => $this->transaction()->blockId(),
-            'createdAt' => $this->createdAt()->getTimestamp(),
+            'parentId' => $this->parentId(),
+            'createdAt' => $this->transaction()->createdAt()->getTimestamp(),
             'name' => $this->name(),
             'data' => $this->data(),
             'authorizations' => $this->authorizationsToArray()
