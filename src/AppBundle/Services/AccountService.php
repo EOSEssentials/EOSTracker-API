@@ -10,7 +10,7 @@ class AccountService extends EntityRepository
     {
         return $this->getEntityManager()->createQuery(<<<DQL
 SELECT a
-FROM AppBundle\Entity\ACCOUNT a
+FROM AppBundle\Entity\Account a
 ORDER BY a.createdAt DESC
 DQL
         )
@@ -36,9 +36,10 @@ DQL
 
     public function withPublicKey(string $publicKey): ?array
     {
+        /*
         $sql = " SELECT account FROM accounts_keys WHERE public_key = '".$publicKey."' LIMIT 1";
         $stmt = $this->getEntityManager()->getConnection()->prepare($sql);
-        $stmt->execute();
-        return $stmt->fetchAll();
+        $stmt->execute(); */ // TODO: fix
+        return [];
     }
 }

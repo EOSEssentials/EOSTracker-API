@@ -18,6 +18,8 @@ AppBundle\Entity\Block:
             type: string
         actionMerkleRoot:
             type: string
+        producer:
+            type: string
         numTransactions:
             type: integer
         version:
@@ -27,9 +29,3 @@ AppBundle\Entity\Block:
             nullable: true
         confirmed:
             type: integer
-    manyToOne:
-        producer:
-            targetEntity: AppBundle\Entity\Account
-            joinColumn:
-              name: producer
-              referencedColumnName: name

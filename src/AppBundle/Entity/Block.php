@@ -25,7 +25,7 @@ class Block
         \DateTime $timestamp,
         string $transactionMerkleRoot,
         string $actionMerkleRoot,
-        Account $producer,
+        string $producer,
         int $numTransactions,
         int $confirmed
     ) {
@@ -88,7 +88,7 @@ class Block
         return $this->actionMerkleRoot;
     }
 
-    public function producer(): Account
+    public function producer(): string
     {
         return $this->producer;
     }
@@ -113,7 +113,7 @@ class Block
             'timestamp' => $this->timestamp()->getTimestamp(),
             'transactionMerkleRoot' => $this->transactionMerkleRoot(),
             'actionMerkleRoot' => $this->actionMerkleRoot(),
-            'producer' => $this->producer()->name(),
+            'producer' => $this->producer(),
             'version' => $this->version(),
             'newProducers' => $this->newProducers(),
             'numTransactions' => $this->numTransactions(),
