@@ -15,12 +15,7 @@ class DefaultController extends Controller
     {
         $result = $this->get('cache.app')->getItem('stats.action');
         if (!$result->isHit()) {
-            $data = [
-                $this->get('api.block_service')->count([]),
-                $this->get('api.transaction_service')->count([]),
-                $this->get('api.account_service')->count([]),
-                $this->get('api.action_service')->count([]),
-            ];
+            $data = [];
             $result->set($data)->expiresAfter(new \DateInterval('PT15S'));
             $this->get('cache.app')->save($result);
         }
