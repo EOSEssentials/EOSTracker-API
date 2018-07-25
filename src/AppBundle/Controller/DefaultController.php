@@ -15,9 +15,7 @@ class DefaultController extends Controller
     {
         $result = $this->get('cache.app')->getItem('stats.action');
         if (!$result->isHit()) {
-            $data = [];
-            $result->set($data)->expiresAfter(new \DateInterval('PT15S'));
-            $this->get('cache.app')->save($result);
+            return new JsonResponse([]);
         }
 
         return new JsonResponse($result->get());
