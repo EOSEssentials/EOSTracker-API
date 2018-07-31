@@ -63,6 +63,9 @@ class TransactionController extends Controller
         $data = [];
 
         $item = $service->findOneBy(['id' => $id]);
+        if (!$item) {
+            return new JsonResponse(['error' => 'entity not found'], 404);
+        }
 
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
