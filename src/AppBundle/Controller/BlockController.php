@@ -79,7 +79,7 @@ class BlockController extends Controller
     public function blockTransactionsAction(string $id, Request $request)
     {
         $service = $this->get('api.block_service');
-        $item = $service->findOneBy(['id' => $id]);
+        $item = $service->findOneBy(['blockNumber' => $id]);
         if (!$item) {
             return new JsonResponse(['error' => 'entity not found'], 404);
         }
