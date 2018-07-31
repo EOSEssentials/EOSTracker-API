@@ -34,36 +34,6 @@ class TransactionController extends Controller
     }
 
     /**
-     * @Route("/v2/transactions", name="transactions2")
-     */
-    public function transactions2Action(Request $request)
-    {
-        $size = min(30, $request->query->getInt('size', 30));
-        $page = max(0, $request->query->getInt('page', 1) - 1);
-        $items = [];
-
-        $result = $this->get('cache.app')->getItem('transactions_v2_'.$size.'_'.$page);
-        if (!$result->isHit()) {
-            $client = new \MongoClient($this->getParameter('env(MONGO_URL)'));
-            $mongo = $client->selectDB('EOS');
-
-            $cursor = $mongo->transactions
-                ->find([], [])
-                ->sort(['createdAt' => -1])
-                ->skip($page * $size)
-                ->limit($size);
-            foreach ($cursor as $key => $document) {
-                $items[] = $document;
-            }
-
-            $result->set($items)->expiresAfter(new \DateInterval('PT10S'));
-            $this->get('cache.app')->save($result);
-        }
-
-        return new JsonResponse($result->get());
-    }
-
-    /**
      * @Route("/transactions/{id}", name="transaction")
      */
     public function transactionAction(string $id)

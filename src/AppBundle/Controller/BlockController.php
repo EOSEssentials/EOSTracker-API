@@ -34,36 +34,6 @@ class BlockController extends Controller
     }
 
     /**
-     * @Route("/v2/blocks", name="blocks2")
-     */
-    public function blocks2Action(Request $request)
-    {
-        $size = min(30, $request->query->getInt('size', 30));
-        $page = max(0, $request->query->getInt('page', 1) - 1);
-        $items = [];
-
-        $result = $this->get('cache.app')->getItem('blocks_v2_'.$size.'_'.$page);
-        if (!$result->isHit()) {
-            $client = new \MongoClient($this->getParameter('env(MONGO_URL)'));
-            $mongo = $client->selectDB('EOS');
-
-            $cursor = $mongo->blocks
-                ->find([], ['block.transactions' => 0])
-                ->sort(['block_num' => -1])
-                ->skip($page * $size)
-                ->limit($size);
-            foreach ($cursor as $key => $document) {
-                $items[] = $document;
-            }
-
-            $result->set($items)->expiresAfter(new \DateInterval('PT10S'));
-            $this->get('cache.app')->save($result);
-        }
-
-        return new JsonResponse($result->get());
-    }
-
-    /**
      * @Route("/blocks/{id}", name="block")
      */
     public function blockAction(string $id)
@@ -108,6 +78,12 @@ class BlockController extends Controller
      */
     public function blockTransactionsAction(string $id, Request $request)
     {
+        $service = $this->get('api.block_service');
+        $item = $service->findOneBy(['id' => $id]);
+        if (!$item) {
+            return new JsonResponse(['error' => 'entity not found'], 404);
+        }
+
         $size = $request->query->getInt('size', 30);
         $page = $request->query->getInt('page', 1);
         $result = $this->get('cache.app')->getItem('block_transaction_'.$id.'_'.$page.'_'.$size);
