@@ -55,11 +55,11 @@ class ActionController extends Controller
     }
 
     /**
-     * @Route("/actions/{tx}/{seq}", name="action_seq")
+     * @Route("/transactions/{tx}/actions/{seq}", name="tx_action_seq")
      */
     public function actionSeqAction(string $tx, string $seq)
     {
-        $result = $this->get('cache.app')->getItem('action_'.$tx.'_'.$seq);
+        $result = $this->get('cache.app')->getItem('tx_action_'.$tx.'_'.$seq);
         if (!$result->isHit()) {
             $serviceTx = $this->get('api.transaction_service');
             $transaction = $serviceTx->findOneBy(['id' => $tx]);
