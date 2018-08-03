@@ -53,4 +53,27 @@ class ActionController extends Controller
         return new JsonResponse($result->get());
 
     }
+
+    /**
+     * @Route("/actions/{tx}/{seq}", name="action_seq")
+     */
+    public function actionSeqAction(string $tx, string $seq)
+    {
+        $result = $this->get('cache.app')->getItem('action_'.$tx.'_'.$seq);
+        if (!$result->isHit()) {
+            $serviceTx = $this->get('api.transaction_service');
+            $transaction = $serviceTx->findOneBy(['id' => $tx]);
+            $service = $this->get('api.action_service');
+            $item = $service->findOneBy(['transaction' => $transaction, 'seq' => $seq]);
+            if (!$item) {
+                return new JsonResponse(['error' => 'entity not found'], 404);
+            }
+
+            $result->set($item->toArray());
+            $this->get('cache.app')->save($result);
+        }
+
+        return new JsonResponse($result->get());
+
+    }
 }
