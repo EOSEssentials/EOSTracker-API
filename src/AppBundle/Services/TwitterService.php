@@ -53,7 +53,7 @@ class TwitterService
 
     public function stats(): ?array
     {
-        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE account="decentwitter" AND name="tweet" GROUP BY theday DESC';
+        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE account="decentwitter" AND name="tweet" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
@@ -63,7 +63,7 @@ class TwitterService
 
     public function statsForUser(string $account): ?array
     {
-        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE a.account="decentwitter" AND a.name="tweet" AND aa.actor="'.$account.'" GROUP BY theday DESC';
+        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE a.account="decentwitter" AND a.name="tweet" AND aa.actor="'.$account.'" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
