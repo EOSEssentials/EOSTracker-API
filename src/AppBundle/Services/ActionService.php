@@ -80,7 +80,7 @@ LEFT JOIN a.authorizations aa
 JOIN a.transaction att
 JOIN a.account ac
 WHERE a.transaction = :TRANSACTION
-ORDER BY a.id DESC
+ORDER BY a.id ASC
 DQL
         )
             ->setParameter('TRANSACTION', $transaction)
