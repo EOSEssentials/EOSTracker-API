@@ -65,7 +65,7 @@ class ActionController extends Controller
             $serviceTx = $this->get('api.transaction_service');
             $transaction = $serviceTx->findOneBy(['id' => $tx]);
             $service = $this->get('api.action_service');
-            $item = $service->findOneBy(['transaction' => $transaction, 'seq' => $seq, 'parent_id' => $parent]);
+            $item = $service->findOneBy(['transaction' => $transaction, 'seq' => $seq, 'parentId' => $parent]);
             if (!$item) {
                 return new JsonResponse(['error' => 'entity not found'], 404);
             }
