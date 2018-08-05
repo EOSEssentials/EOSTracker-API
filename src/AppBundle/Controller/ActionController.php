@@ -59,7 +59,7 @@ class ActionController extends Controller
      */
     public function actionSeqAction(string $tx, string $seq, Request $request)
     {
-        $parent = $request->request->getInt('parentId', 0);
+        $parent = $request->query->getInt('parentId', 0);
         $result = $this->get('cache.app')->getItem('tx_action_'.$tx.'_'.$seq.'_'.$parent);
         if (!$result->isHit()) {
             $serviceTx = $this->get('api.transaction_service');
