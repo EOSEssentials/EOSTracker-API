@@ -34,7 +34,7 @@ WHERE aa.actor = :ACCOUNT
 ORDER BY a.id DESC
 DQL
         )
-            ->setParameter('ACCOUNT', $account)
+            ->setParameter('ACCOUNT', $account->name())
             ->setFirstResult($limit * ($page - 1))
             ->setMaxResults($limit)
             ->getResult();

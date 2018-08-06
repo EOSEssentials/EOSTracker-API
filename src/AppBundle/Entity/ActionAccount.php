@@ -8,14 +8,14 @@ class ActionAccount
     private $actor;
     private $permission;
 
-    public function __construct(Action $action, Account $actor, string $permission)
+    public function __construct(Action $action, string $actor, string $permission)
     {
         $this->action = $action;
         $this->actor = $actor;
         $this->permission = $permission;
     }
 
-    public function actor(): Account
+    public function actor(): string
     {
         return $this->actor;
     }
@@ -33,7 +33,7 @@ class ActionAccount
     public function toArray(): array
     {
         return [
-            'actor' => $this->actor()->name(),
+            'actor' => $this->actor(),
             'action' => $this->action()->id(),
             'permission' => $this->permission(),
         ];
