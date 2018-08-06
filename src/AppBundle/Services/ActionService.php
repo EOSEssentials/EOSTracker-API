@@ -11,7 +11,7 @@ class ActionService extends EntityRepository
     public function get(int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-SELECT a, att, acc
+SELECT a, att
 FROM AppBundle\Entity\Action a
 JOIN a.transaction att
 WHERE a.parentId = 0
@@ -26,7 +26,7 @@ DQL
     public function getFromAccount(Account $account, int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-SELECT a, aa, att, ac
+SELECT a, aa, att
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
@@ -54,7 +54,7 @@ DQL
     public function getToAccount(Account $account, int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-SELECT a, aa, att, ac
+SELECT a, aa, att
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
@@ -71,7 +71,7 @@ DQL
     public function getForTransaction(Transaction $transaction, int $page = 1, int $limit = 30)
     {
         return $this->getEntityManager()->createQuery(<<<DQL
-SELECT a, aa, att, ac
+SELECT a, aa, att
 FROM AppBundle\Entity\Action a
 LEFT JOIN a.authorizations aa
 JOIN a.transaction att
