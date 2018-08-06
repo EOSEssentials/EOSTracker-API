@@ -11,16 +11,13 @@ AppBundle\Entity\Action:
             nullable: true
         name:
             type: string
+        account:
+            type: string
         seq:
             type: integer
         parentId:
             type: integer
     manyToOne:
-        account:
-            targetEntity: AppBundle\Entity\Account
-            joinColumn:
-              name: account
-              referencedColumnName: name
         transaction:
             targetEntity: AppBundle\Entity\Transaction
     oneToMany:

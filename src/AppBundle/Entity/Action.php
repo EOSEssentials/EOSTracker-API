@@ -13,7 +13,7 @@ class Action
     private $seq;
     private $parentId;
 
-    public function __construct(int $id, Account $account, Transaction $transaction, string $name, array $data, int $seq = 0, int $parentId = 0)
+    public function __construct(int $id, string $account, Transaction $transaction, string $name, array $data, int $seq = 0, int $parentId = 0)
     {
         $this->id = $id;
         $this->account = $account;
@@ -40,7 +40,7 @@ class Action
         return $this->seq;
     }
 
-    public function account(): Account
+    public function account(): string
     {
         return $this->account;
     }
@@ -70,7 +70,7 @@ class Action
         return [
             'id' => $this->id(),
             'seq' => $this->seq(),
-            'account' => $this->account()->name(),
+            'account' => $this->account(),
             'transaction' => $this->transaction()->id(),
             'blockId' => $this->transaction()->blockId(),
             'parentId' => $this->parentId(),
