@@ -2,47 +2,11 @@ parameters:
     #parameter_name: value
 
 services:
-  api.fixtures.accounts:
-    class: AppBundle\DataFixtures\AccountFixtures
-    tags: [doctrine.fixture.orm]
-    public: false
-
   api.account_service:
     class: AppBundle\Services\AccountService
     factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
     arguments:
       - AppBundle\Entity\Account
-    lazy: true
-    public: true
-
-  api.block_service:
-    class: AppBundle\Services\BlockService
-    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
-    arguments:
-      - AppBundle\Entity\Block
-    lazy: true
-    public: true
-
-  api.action_service:
-    class: AppBundle\Services\ActionService
-    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
-    arguments:
-      - AppBundle\Entity\Action
-    lazy: true
-    public: true
-
-  api.transaction_service:
-    class: AppBundle\Services\TransactionService
-    factory: ['@doctrine.orm.default_entity_manager', 'getRepository']
-    arguments:
-      - AppBundle\Entity\Transaction
-    lazy: true
-    public: true
-
-  api.vote_service:
-    class: AppBundle\Services\VoteService
-    arguments:
-      - "@doctrine.orm.entity_manager"
     lazy: true
     public: true
 

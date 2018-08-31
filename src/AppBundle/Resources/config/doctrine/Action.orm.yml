@@ -13,8 +13,6 @@ AppBundle\Entity\Action:
             type: string
         account:
             type: string
-        seq:
-            type: integer
         parentId:
             type: integer
     manyToOne:

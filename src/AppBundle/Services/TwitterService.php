@@ -16,16 +16,7 @@ class TwitterService
 
     public function all(int $page = 0): ?array
     {
-        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(t.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
-        $stmt = $this->entityManager->getConnection()->prepare($sql);
-        $stmt->execute();
-
-        return $stmt->fetchAll();
-    }
-
-    public function replies(array $tweetIds): ?array
-    {
-        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(t.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $sql = "SELECT a.id, a.transaction_id, UNIX_TIMESTAMP(created_at) AS created_at, JSON_UNQUOTE(auth->\"$[0].actor\") as actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a WHERE account = 'decentwitter' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
 
@@ -34,7 +25,7 @@ class TwitterService
 
     public function forUser(string $account, int $page = 0): ?array
     {
-        $sql = "SELECT a.id, a.transaction_id, a.seq, UNIX_TIMESTAMP(t.created_at) AS created_at, aa.actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND aa.actor='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $sql = "SELECT a.id, a.transaction_id, UNIX_TIMESTAMP(created_at) AS created_at, JSON_UNQUOTE(auth->\"$[0].actor\") as actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a WHERE account = 'decentwitter' AND actor='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
 
@@ -43,7 +34,7 @@ class TwitterService
 
     public function avatarForUser(string $account): ?string
     {
-        $sql = "SELECT JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a JOIN actions_accounts aa ON a.id = aa.action_id WHERE account = 'decentwitter' AND aa.actor='".$account."' AND name='avatar' ORDER BY a.id DESC LIMIT 1";
+        $sql = "SELECT JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a WHERE account = 'decentwitter' AND JSON_UNQUOTE(auth->\"$[0].actor\")='".$account."' AND name='avatar' ORDER BY a.id DESC LIMIT 1";
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
@@ -53,7 +44,7 @@ class TwitterService
 
     public function stats(): ?array
     {
-        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id WHERE account="decentwitter" AND name="tweet" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
+        $sql = 'SELECT count(a.id) AS amount, DATE(created_at) AS theday FROM actions a WHERE account="decentwitter" AND name="tweet" AND created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
@@ -63,7 +54,7 @@ class TwitterService
 
     public function statsForUser(string $account): ?array
     {
-        $sql = 'SELECT count(a.id) AS amount, DATE(t.created_at) AS theday FROM actions a JOIN transactions t ON a.transaction_id = t.id JOIN actions_accounts aa ON a.id = aa.action_id WHERE a.account="decentwitter" AND a.name="tweet" AND aa.actor="'.$account.'" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
+        $sql = 'SELECT count(a.id) AS amount, DATE(created_at) AS theday FROM actions a WHERE a.account="decentwitter" AND a.name="tweet" AND JSON_UNQUOTE(auth->"$[0].actor")="'.$account.'" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
