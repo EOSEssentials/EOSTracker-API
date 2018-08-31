@@ -15,10 +15,3 @@ AppBundle\Entity\Action:
             type: string
         parentId:
             type: integer
-    manyToOne:
-        transaction:
-            targetEntity: AppBundle\Entity\Transaction
-    oneToMany:
-        authorizations:
-          targetEntity: AppBundle\Entity\ActionAccount
-          mappedBy: action
