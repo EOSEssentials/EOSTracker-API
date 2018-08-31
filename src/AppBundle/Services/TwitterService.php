@@ -54,7 +54,7 @@ class TwitterService
 
     public function statsForUser(string $account): ?array
     {
-        $sql = 'SELECT count(a.id) AS amount, DATE(created_at) AS theday FROM actions a WHERE a.account="decentwitter" AND a.name="tweet" AND JSON_UNQUOTE(auth->"$[0].actor")="'.$account.'" AND t.created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
+        $sql = 'SELECT count(a.id) AS amount, DATE(created_at) AS theday FROM actions a WHERE a.account="decentwitter" AND a.name="tweet" AND JSON_UNQUOTE(auth->"$[0].actor")="'.$account.'" AND created_at > NOW() - INTERVAL 1 WEEK GROUP BY theday DESC';
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
         $result = $stmt->fetchAll();
