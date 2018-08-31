@@ -25,7 +25,7 @@ class TwitterService
 
     public function forUser(string $account, int $page = 0): ?array
     {
-        $sql = "SELECT a.id, a.transaction_id, UNIX_TIMESTAMP(created_at) AS created_at, JSON_UNQUOTE(auth->\"$[0].actor\") as actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a WHERE account = 'decentwitter' AND actor='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
+        $sql = "SELECT a.id, a.transaction_id, UNIX_TIMESTAMP(created_at) AS created_at, JSON_UNQUOTE(auth->\"$[0].actor\") as actor, JSON_UNQUOTE(data->\"$.msg\") AS msg FROM actions a WHERE account = 'decentwitter' AND JSON_UNQUOTE(auth->\"$[0].actor\")='".$account."' AND name='tweet' ORDER BY a.id DESC LIMIT 50 OFFSET ".$page * 50;
         $stmt = $this->entityManager->getConnection()->prepare($sql);
         $stmt->execute();
 
