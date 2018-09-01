@@ -61,7 +61,11 @@ doctrine:
         url: "%env(DB_URL)%"
         driver:   pdo_mysql
         server_version: 5.7
-        charset:  UTF8
+        charset: utf8mb4
+        default_table_options:
+            charset: utf8mb4
+            collate: utf8mb4_unicode_ci
+
     orm:
         auto_generate_proxy_classes: "%kernel.debug%"
         metadata_cache_driver: apcu # enable clear cache if changed
