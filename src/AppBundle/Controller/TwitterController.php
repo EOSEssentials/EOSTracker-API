@@ -16,10 +16,11 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
         $page = $request->query->getInt('page', 0);
+        $chainId = $request->headers->get('X-Chain', null);
 
-        $result = $this->get('cache.app')->getItem('tweets_'.$page);
+        $result = $this->get('cache.app')->getItem('tweets_'.$page.'_'.$chainId);
         if (!$result->isHit()) {
-            $data = $service->all($page);
+            $data = $service->all($page, $chainId);
             $result->set($data)->expiresAfter(new \DateInterval('PT3S'));
             $this->get('cache.app')->save($result);
         }
@@ -30,13 +31,14 @@ class TwitterController extends Controller
     /**
      * @Route("/tweets/stats", name="tweets_stats")
      */
-    public function tweetsStatsAction()
+    public function tweetsStatsAction(Request $request)
     {
         $service = $this->get('api.twitter_service');
+        $chainId = $request->headers->get('X-Chain', null);
 
-        $result = $this->get('cache.app')->getItem('tweets_stats');
+        $result = $this->get('cache.app')->getItem('tweets_stats_'.$chainId);
         if (!$result->isHit()) {
-            $data = $service->stats();
+            $data = $service->stats($chainId);
             $result->set($data)->expiresAfter(new \DateInterval('PT120S'));
             $this->get('cache.app')->save($result);
         }
@@ -51,21 +53,23 @@ class TwitterController extends Controller
     {
         $service = $this->get('api.twitter_service');
         $page = $request->query->getInt('page', 0);
+        $chainId = $request->headers->get('X-Chain', null);
 
-        return new JsonResponse($service->forUser($username, $page));
+        return new JsonResponse($service->forUser($username, $page, $chainId));
     }
 
     /**
      * @Route("/tweets/{username}/avatar.png", name="tweets_user_avatar")
      */
-    public function tweetsUserAvatarAction(string $username)
+    public function tweetsUserAvatarAction(string $username, Request $request)
     {
         $service = $this->get('api.twitter_service');
+        $chainId = $request->headers->get('X-Chain', null);
 
-        $result = $this->get('cache.app')->getItem('tweets_avatar_'.$username);
+        $result = $this->get('cache.app')->getItem('tweets_avatar_'.$username.'_'.$chainId);
         if (!$result->isHit()) {
             $url = 'https://api.adorable.io/avatars/102/'.$username.'@adorable.png';
-            $avatar = $service->avatarForUser($username);
+            $avatar = $service->avatarForUser($username, $chainId);
             if ($avatar) {
                 $url = 'https://images.weserv.nl/?url='.$this->removeHttp($avatar).'&h=150';
             }
@@ -79,13 +83,14 @@ class TwitterController extends Controller
     /**
      * @Route("/tweets/{username}/stats", name="tweets_user_stats")
      */
-    public function tweetsUserStatsAction(string $username)
+    public function tweetsUserStatsAction(string $username, Request $request)
     {
         $service = $this->get('api.twitter_service');
+        $chainId = $request->headers->get('X-Chain', null);
 
-        $result = $this->get('cache.app')->getItem('tweets_user_stats_'.$username);
+        $result = $this->get('cache.app')->getItem('tweets_user_stats_'.$username.'_'.$chainId);
         if (!$result->isHit()) {
-            $data = $service->statsForUser($username);
+            $data = $service->statsForUser($username, $chainId);
             $result->set($data)->expiresAfter(new \DateInterval('PT60S'));
             $this->get('cache.app')->save($result);
         }
